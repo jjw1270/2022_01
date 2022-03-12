@@ -1,0 +1,24 @@
+동영상볼것
+
+시험 1번 graphics system 그림에 빈칸 채우기
+
+----or ----of the frame buffer 시험
+
+synthetic-camera model(1)
+-빈칸 3개 중요
+
+java script에는 그래픽스관련코드
+
+쉐이더 : gpu에서 실행되는 프로그램
+
+
+gl_Position = vPosition;    <!--화면상에서의 위치값. 필수##-->
+
+precision mediump float;       <!-- 정확도를 미리 지정해야함 -->
+
+gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);  <!--도형의 색상. 필수##-->
+
+
+
+2.
+TRIANGLES//3개씩 끝어서 삼각형을 만들어라
