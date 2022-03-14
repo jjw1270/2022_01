@@ -1,9 +1,36 @@
-ï»¿#include <iostream>
+#include <iostream>
 #include <iomanip>
 #include <cstdio>
-//ë‘ ë¬¸ìì—´ì„ getsë¡œ ë°›ì•„ ë‘˜ì´ ê°™ì€ì§€ ë¹„êµ
+//µÎ ¹®ÀÚ¿­À» gets·Î ¹Ş¾Æ µÑÀÌ °°ÀºÁö ºñ±³
 using namespace std;
 int main(){
-    //cì˜ í¬ì¸í„° ë°°ì—´ ê³µë¶€í•  ê²ƒ
+    //cÀÇ Æ÷ÀÎÅÍ ¹è¿­ °øºÎÇÒ °Í
+    char a[100];
+    char b[100];
 
+    char* pa;
+    char* pb;
+
+    cout << "Ã¹ ¹øÂ° ¹®ÀÚ¿­ ÀÔ·Â : ";
+    gets(a);
+    cout << "µÎ ¹øÂ° ¹®ÀÚ¿­ ÀÔ·Â : ";
+    gets(b);
+
+    pa = a;
+    pb = b;
+
+    if(sizeof(pa) == sizeof(pb)){
+        for(int i = 0; i < sizeof(pa); i++){
+            if(pa[i] != pb[i]){
+                cout << "µÎ ¹®ÀÚ¿­Àº ´Ù¸¨´Ï´Ù!!";
+                return 0;
+            }
+        }
+        cout << "µÎ ¹®ÀÚ¿­Àº °°½À´Ï´Ù!";
+    }
+    else{
+        cout << "µÎ ¹®ÀÚ¿­Àº ´Ù¸¨´Ï´Ù!!";
+    }
+
+    return 0;
 }

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>20175334장윤제 - Sierpinski Gasket</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <script id="vertex-shader" type="x-shader/x-vertex">
+        attribute vec4 vPosition;
+
+        void main() {
+            gl_PointSize = 2.0;   //점의 크기 설정
+            gl_Position = vPosition;
+        }
+        </script>
+
+        <script id="fragment-shader" type="x-shader/x-fragment">
+        precision mediump float;
+
+        void main() {
+            gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);   //색상을 바꿔줌. 반드시 사용해야함.
+        }
+        </script>
+
+        <script type="text/javascript" src="../Common/webgl-utils.js"></script>
+        <script type="text/javascript" src="../Common/initShaders.js"></script>
+        <script type="text/javascript" src="../Common/MV.js"></script>
+        <script type="text/javascript" src="gasket.js" charset="utf-8"></script>
+    </head>
+    <body>
+        <canvas id="gl-canvas" width="512" height="512">
+            Oops... your browser doesn't support the HTML5 canvas element!
+        </canvas>
+        <p>점의 개수: <input type="text" id="numPoints" value="5000" onchange="drawGasket()"></p>
+        <!--onchage : 값을 입력했을 때 호출하는 이벤트 : 해당 함수 실행.-->
+    </body>
+</html>
