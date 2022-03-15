@@ -23,13 +23,13 @@
         <script type="text/javascript" src="../Common/webgl-utils.js"></script>
         <script type="text/javascript" src="../Common/initShaders.js"></script>
         <script type="text/javascript" src="../Common/MV.js"></script>
-        <script type="text/javascript" src="gasket.js" charset="utf-8"></script>
+        <script type="text/javascript" src="gasket2d.js" charset="utf-8"></script>
     </head>
     <body>
         <canvas id="gl-canvas" width="512" height="512">
             Oops... your browser doesn't support the HTML5 canvas element!
         </canvas>
-        <p>점의 개수: <input type="text" id="numPoints" value="5000" onchange="drawGasket()"></p>
-        <!--onchage : 값을 입력했을 때 호출하는 이벤트 : 해당 함수 실행.-->
+       <p>Subdivision Level : 1<input type="range" id="level" value="5" min="1" max="9" step="1" value="5"> 9</p>
+        <!---->
     </body>
 </html>
