@@ -1,6 +1,6 @@
 var gl;
 var points;
-var numPoints = 5000;
+var numTimes = 5;
 
 window.onload = function init() //처음 시작할 때 발생되는 이벤트
 {
@@ -11,8 +11,18 @@ window.onload = function init() //처음 시작할 때 발생되는 이벤트
         alert("WebGL isn't available!");
     }
 
+    document.getElementById("level").onchange = function(event){
+        numTimes = event.target.value;
+
+        generateTriangles();
+
+        gl.bufferData(gl.ARRAY_BUFFER, flatten(points), gl.STATIC_DRAW);
+
+        render();
+    }
+
     // Sierpinski Gasket
-    generatePoints();
+    generateTriangles();
 
     // Configure WebGL
     gl.viewport(0, 0, canvas.width, canvas.height);
@@ -37,10 +47,10 @@ window.onload = function init() //처음 시작할 때 발생되는 이벤트
 
 function render() {
     gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.drawArrays(gl.POINTS, 0, points.length);
+    gl.drawArrays(gl.TRIANGLES, 0, points.length);
 }
 
-function generatePoints() {
+function generateTriangles() {
     // Initialize the data for the Sierpinski Gasket
     // First, initialize the corners of a gasket with three points
     var vertices = [
@@ -49,36 +59,27 @@ function generatePoints() {
         vec2(1, -1)
     ];
 
-    // Specify a starting point p for iterations
-    // p must lie inside any set of three vertices
-    var u = add(vertices[0], vertices[1]);  //vertices0번과 1번을 더함.
-    var v = add(vertices[0], vertices[2]);
-    var p = scale(0.25, add(u, v));   // u/2 * v/2 해서 두 점의 중점을 구한다!
+    points = [];
 
-    // Add an initial point into the array of points
-    points = [p];   //배열 초기화
-
-    // Compute the new points
-    // Each new point is located midway between last point and a randomly chosen vertex
-    for (var i=0; points.length<numPoints; i++) {
-        var j = Math.floor(Math.random() * 3);   //랜덤으로 꼭지점 3중 하나를 받아 버림함수로 정수받음.
-        p = add(points[i], vertices[j]);
-        p = scale(0.5, p);
-        points.push(p);
-    }
+    divideTriangle(vertices[0], vertices[1], vertices[2], numTimes);
 }
 
-function drawGasket(){
-    numPoints = parseInt(document.getElementById("numPoints").value);  //text로 받은값을 정수형으로 변환
-
-    if(numPoints > 0 && numPoints <= 50000) {
-        generatePoints();
-
-        gl.bufferData(gl.ARRAY_BUFFER, flatten(points), gl.STATIC_DRAW);  //중요! 변경한 데이터를 버퍼에 저장. retain mode라서.
-
-        render();
+function divideTriangle(a, b, c, count){
+    //check for the end of recursion
+    if (count == 0){
+        points.push(a,b,c);
     }
     else{
-        alert("점의 개수는 0보다 크고 50,000보다 작거나 같아야 한다.");
+        //bisect the sides
+        var ab = mix(a,b,0.5);
+        var bc = mix(b,c,0.5);
+        var ca = mix(c,a,0.5);
+
+        count--;
+
+        //three new triangeles
+        divideTriangle(a, ab, ca, count);
+        divideTriangle(b, bc, ab, count);
+        divideTriangle(c, ca, bc, count);
     }
 }
