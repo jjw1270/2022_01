@@ -1,0 +1,111 @@
+3주차 연습문제
+
+2. 
+A : C, 객체지향
+B : cpp
+C : iostream
+D : using
+E : std::cin
+F : boolalpha
+G : *ptr, val
+H : {,}
+
+
+8.
+int d{3.6}; 오류 = 초기값의 축소 변환 불가능
+
+9.
+#include<cstdio>
+auto sum(int s, int e);
+auto sum(int s, int e){
+  auto tmp = 0, res = 0;
+  if(s>e){
+    tmp = e;
+    e = s;
+    s = tmp;
+  }
+  for (auto k = s; k <= e; k++){
+    res += k;
+  }
+  return res;
+}
+int main(){
+  int a, b;
+  cout << "첫 수와 마지막 수를 입력 : ";
+  cin >> a >> b;
+  cout << a <<"부터" << b << "까지의 합은 " << sum(a,b) << "입니다.\n";
+  return 0;
+}
+
+13.
+#include <iostream>
+#include <iomanip>
+using namespace std;
+int main(){
+    double num;
+
+    cout << "실수를 입력하세요 : ";
+    cin >> num;
+
+    int intNum = static_cast<int>(num);
+    double douNum = num - intNum;
+
+    cout << "정수 파트 : " << intNum << endl;
+    cout << "소수 파트 : " << douNum << endl;
+}
+
+14.
+#include <iostream>
+#include <cstdlib>
+
+using namespace std;
+//아스키코드로 비교
+char list_exam(initializer_list<char> lst, char chr){
+    int min = 999;
+    char rst;
+    for(char value : lst){
+        int minTmp = abs(value - chr);
+
+        if(min > minTmp){
+            //최소값
+            rst = value;
+            min = minTmp;
+        }
+    }
+    return rst;
+}
+
+int main(){
+    cout<<"{'d', 'p', 'r', 'w', 'g', 'f'}문자 중 h와 가까운 문자는 : ";
+    cout << list_exam({'d', 'p', 'r', 'w', 'g', 'f'}, 'h') << endl;
+
+    cout << "{'k', 'q', 'b', 'r', 'a', 'e', 'v', 'z'} 문자 중 w와 가까운 문자는: ";
+    cout << list_exam({'k', 'q', 'b', 'r', 'a', 'e', 'v', 'z'}, 'w') << endl;
+}
+
+15.
+#include <iostream>
+#include <iomanip>
+#include <array>
+#include <algorithm>
+using namespace std;
+
+int main(){
+    array<int, 5> arr;
+
+    cout << "정수 입력 : " << endl;
+    for(int a = 0; a < arr.size(); a++){
+        cin >> arr.at(a);
+    }
+    
+    cout << "배열에 저장된 내용 : ";
+    for(int a = 0; a < arr.size(); a++){
+        cout << arr.at(a) << " ";
+    }
+    cout << endl << "배열 오름차순 정렬 : ";
+    sort(arr.begin(), arr.end());
+    for(int a = 0; a < arr.size(); a++){
+        cout << arr.at(a) << " ";
+    }
+}
+
