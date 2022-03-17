@@ -3,6 +3,7 @@ using namespace std;
 
 int main(){
     enum class RPS{Rack = 1, Paper, Sissors};
+    cout << "20175334 장윤제" << endl;
     do{
         cout << "정수 입력(1,2,3이 아닌 수는 프로그램종료) : ";
         int num;
