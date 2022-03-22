@@ -1,0 +1,83 @@
+1.
+A. x
+B. o
+C. x
+D. o
+
+2.
+cin >> name; ==> getline(cin, name);
+
+3.
+A. clear()
+B. substr()
+C. append()
+D. erase()
+E. to_string()
+
+4.
+std::string str("This is a string.");
+std::cout << str.size() << std::endl;  //또는 str.length()
+
+5.
+std::string str1("The time has come.");
+std::string str2("Are your ready?");
+str1.append(str2);
+std::cout << str1 << std::endl;
+
+6.
+std::string str("ABCDEFGH");
+str.erase(0,1);  //또는 str.substr(1);->1번 부터 끝까지 추출!
+std::cout << str << std::endl;
+
+7.   //strstr(str, "is") ==> 문자열이 있을 때 is의 위치를 리턴
+string str("This is a long string.");
+int loc = str.find("is");
+cout << str[loc] << endl;
+cout << str.substr(loc) << endl;
+
+8.
+string str("ABCDEFGH");
+int loc = str.length() -1;
+cout << str.substr(loc) << endl;
+
+9.
+#include <iostream>
+#include <string>
+using namespace std;
+
+string removeChar(string str, char c){
+    do{
+        if(str.find(c)!=-1){
+            str.erase(str.find(c),1);
+        }
+        else{
+           return str;
+        }
+    }while(true);
+};
+string findAndReplace(string str, string olds, string news){
+    int oldLength = olds.length();
+    int loc = str.find(olds);
+    str.erase(loc, oldLength);
+    str.insert(loc, news);
+    return str;
+};
+
+int main(){
+    string str;
+    char c;
+    cout << "문자열 입력 : ";
+    getline(cin, str);
+    cout << "삭제하고자 하는 문자 입력 : ";
+    cin >> c;
+    cout << "삭제 후 문자열 = " << removeChar(str, c) << endl << endl;
+
+    string str1 = "an old string";
+    string str2("an old");
+    string str3("a new");
+
+    cout << str1 << "에서";
+    string strnew = findAndReplace(str1, str2, str3);
+    cout << str2 << "문자열을" << str3 << "로 교체 후 문자열 = " << strnew << endl;
+    return 0;
+}
