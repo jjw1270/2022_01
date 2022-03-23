@@ -1,6 +1,9 @@
 var gl;
 var theta = 0;
 var direction = true;
+var stop = false;
+var delay = 100;
+
 window.onload = function init()
 {
     var canvas = document.getElementById("gl-canvas");
@@ -13,6 +16,22 @@ window.onload = function init()
     // Initialize event handlers
     document.getElementById("directionButton").onclick = function() {
         direction = !direction;
+    };
+    document.getElementById("myMenu").onclick = function(event){
+        switch(event.target.index){
+            case 0:
+                delay *= 0.5;
+                break;
+            case 1:
+                delay *= 2.0;
+                break;
+        }
+    };
+    document.getElementById("stopButton").onclick = function(event){
+        stop = !stop;
+        if(stop){
+            event.target.innerText = "Start Rotation";
+        }
     }
 
     var vertices = [
@@ -52,11 +71,11 @@ function render()
     setTimeout(function(){
         gl.clear(gl.COLOR_BUFFER_BIT);   //색상 관여 버퍼 초기화-->배경색clearColor로 초기화
 
-        theta += (direction ? 0.1 : -0.1);
+        theta += (stop ? 0 : (direction ? 0.1 : -0.1));
         gl.uniform1f(thetaLoc, theta);
 
         gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);  //그려라
 
         window.requestAnimationFrame(render);
-    }, 10);
+    }, delay);
 }
