@@ -3,6 +3,8 @@ var theta = 0;
 var direction = true;
 var stop = false;
 var delay = 100;
+var length = 1.0;
+var lengthLoc;
 
 window.onload = function init()
 {
@@ -18,12 +20,18 @@ window.onload = function init()
         direction = !direction;
     };
     document.getElementById("myMenu").onclick = function(event){
-        switch(event.target.index){
-            case 0:
+        switch(event.target.value){
+            case 'Fast':
                 delay *= 0.5;
                 break;
-            case 1:
+            case 'Slow':
                 delay *= 2.0;
+                break;
+            case 'Big':
+                length *= 1.1;
+                break;
+            case 'Small':
+                length *= 0.9;
                 break;
         }
     };
@@ -77,5 +85,5 @@ function render()
         gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);  //그려라
 
         window.requestAnimationFrame(render);
-    }, delay);
+    }, delay);    //delay 밀리세컨드 작을수록 빠르다
 }
