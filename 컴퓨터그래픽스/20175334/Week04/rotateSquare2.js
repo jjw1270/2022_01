@@ -3,8 +3,6 @@ var theta = 0;
 var direction = true;
 var stop = false;
 var delay = 100;
-var length = 1.0;
-var lengthLoc;
 
 window.onload = function init()
 {
@@ -21,20 +19,18 @@ window.onload = function init()
     };
     document.getElementById("myMenu").onclick = function(event){
         switch(event.target.value){
-            case 'Fast':
+            case '0':
                 delay *= 0.5;
                 break;
-            case 'Slow':
+            case '1':
                 delay *= 2.0;
-                break;
-            case 'Big':
-                length *= 1.1;
-                break;
-            case 'Small':
-                length *= 0.9;
                 break;
         }
     };
+    document.getElementById("speedSlider").onchange = function(event){
+        delay = event.target.value;
+    }
+
     document.getElementById("stopButton").onclick = function(event){
         stop = !stop;
         if(stop){
@@ -51,39 +47,39 @@ window.onload = function init()
 
     // Configure WebGL
     gl.viewport(0, 0, canvas.width, canvas.height);
-    gl.clearColor(1.0, 1.0, 1.0, 1.0);    //¹è°æ»ö
+    gl.clearColor(1.0, 1.0, 1.0, 1.0);    //ë°°ê²½ìƒ‰
 
     // Load shaders and initialize attribute buffers
-    var program = initShaders(gl, "vertex-shader", "fragment-shader");   //µÎ°³ÀÇ ½¦ÀÌ´õ¸¦ ÀĞ¾îµé¿©¼­ ÄÄÆÄÀÏ
+    var program = initShaders(gl, "vertex-shader", "fragment-shader");   //ë‘ê°œì˜ ì‰ì´ë”ë¥¼ ì½ì–´ë“¤ì—¬ì„œ ì»´íŒŒì¼
     gl.useProgram(program);
 
     // Load the data into the GPU
-    var bufferId = gl.createBuffer();  //¹öÆÛ¸¦ »ı¼º
+    var bufferId = gl.createBuffer();  //ë²„í¼ë¥¼ ìƒì„±
     gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
-    gl.bufferData(gl.ARRAY_BUFFER, flatten(vertices), gl.STATIC_DRAW);  //32ºñÆ® float·Î ¹Ù²Ù´Â ÇÔ¼ö flatten
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(vertices), gl.STATIC_DRAW);  //32ë¹„íŠ¸ floatë¡œ ë°”ê¾¸ëŠ” í•¨ìˆ˜ flatten
 
     // Associate our shader variables with our data buffer
     var vPosition = gl.getAttribLocation(program, "vPosition");
-    gl.vertexAttribPointer(vPosition, 2, gl.FLOAT, false, 0, 0);   //2Â÷¿ø FLOAT 
-    gl.enableVertexAttribArray(vPosition);   //vposition »ç¿ë °¡´ÉÀÌ¶ó°í ¼±¾ğ
-//À§ 6ÁÙ Áß¿ä!
+    gl.vertexAttribPointer(vPosition, 2, gl.FLOAT, false, 0, 0);   //2ì°¨ì› FLOAT 
+    gl.enableVertexAttribArray(vPosition);   //vposition ì‚¬ìš© ê°€ëŠ¥ì´ë¼ê³  ì„ ì–¸
+//ìœ„ 6ì¤„ ì¤‘ìš”!
 
     thetaLoc = gl.getUniformLocation(program, "theta");
     gl.uniform1f(thetaLoc, theta);
 
-    render();  //±×·Á¶ó
+    render();  //ê·¸ë ¤ë¼
 };
 
 function render()
 {
     setTimeout(function(){
-        gl.clear(gl.COLOR_BUFFER_BIT);   //»ö»ó °ü¿© ¹öÆÛ ÃÊ±âÈ­-->¹è°æ»öclearColor·Î ÃÊ±âÈ­
+        gl.clear(gl.COLOR_BUFFER_BIT);   //ìƒ‰ìƒ ê´€ì—¬ ë²„í¼ ì´ˆê¸°í™”-->ë°°ê²½ìƒ‰clearColorë¡œ ì´ˆê¸°í™”
 
         theta += (stop ? 0 : (direction ? 0.1 : -0.1));
         gl.uniform1f(thetaLoc, theta);
 
-        gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);  //±×·Á¶ó
+        gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);  //ê·¸ë ¤ë¼
 
         window.requestAnimationFrame(render);
-    }, delay);    //delay ¹Ğ¸®¼¼ÄÁµå ÀÛÀ»¼ö·Ï ºü¸£´Ù
+    }, delay);
 }
