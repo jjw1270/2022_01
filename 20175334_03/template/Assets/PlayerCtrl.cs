@@ -12,6 +12,7 @@ public class PlayerCtrl : MonoBehaviour
     private bool isTriggered = false;
     public Text textUI;
     public AudioClip[] soundEffects;
+    private AudioClip soundEffect;
     private AudioSource audioSource;
     // Start is called before the first frame update
     void Start()
@@ -33,38 +34,39 @@ public class PlayerCtrl : MonoBehaviour
                 textUI.text = "";
                 gaugeTimer = 0;
             }
+            else if(hit.collider.GetComponent<ObjectText>().text == "Start"){
+                if(isTriggered)
+                    SceneManager.LoadScene("GameScene");
+            }
             else{
+                switch(hit.collider.GetComponent<ObjectText>().text){
+                    case "Car" :
+                        soundEffect = soundEffects[0];
+                        break;
+                    case "Building" :
+                        soundEffect = soundEffects[1];
+                        break;
+                    case "Tree" :
+                        soundEffect = soundEffects[2];
+                        break;
+                    case "Mike" :
+                        soundEffect = soundEffects[3];
+                        break;
+                    case "Kate" :
+                        soundEffect = soundEffects[4];
+                        break;
+                    case "Bill" :
+                        soundEffect = soundEffects[5];
+                        break;
+                }
                 gaugeTimer += 1.0f / 3.0f * Time.deltaTime;
-                if(gaugeTimer >= 1.0f || isTriggered){
-                    if(hit.collider.GetComponent<ObjectText>().text == "Start"){
-                        SceneManager.LoadScene("GameScene");
-                    }
+                if(gaugeTimer >= 1.0f || isTriggered){                    
                     textUI.text = hit.collider.GetComponent<ObjectText>().text;
-                    switch(textUI.text){
-                        case "Car" :
-                            audioSource.PlayOneShot(soundEffects[0]);
-                            break;
-                        case "Building" :
-                            audioSource.PlayOneShot(soundEffects[1]);
-                            break;
-                        case "Tree" :
-                            audioSource.PlayOneShot(soundEffects[2]);
-                            break;
-                        case "Mike" :
-                            audioSource.PlayOneShot(soundEffects[3]);
-                            break;
-                        case "Kate" :
-                            audioSource.PlayOneShot(soundEffects[4]);
-                            break;
-                        case "Bill" :
-                            audioSource.PlayOneShot(soundEffects[5]);
-                            break;
-                    }
+                    audioSource.PlayOneShot(soundEffect);
                     gaugeTimer = 0;
                     isTriggered = false;
                 }
             }
-            
         }
         else
             gaugeTimer = 0;

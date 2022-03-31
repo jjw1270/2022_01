@@ -3,12 +3,12 @@ using namespace std;
 
 class Person{
 private:
-    string name = "Anonymous";
-    int age = 0;
+    string name;
+    int age;
     int getAge();
 public:
     string getName();
-    //Person();
+    Person();
     Person(string n, int a);
     ~Person();
 };
@@ -18,6 +18,7 @@ string Person::getName(){
 int Person::getAge(){
     return age;
 }
+Person::Person() : Person("Anonymous", 0) {}
 Person::Person(string n, int a) : name{n}, age{a}{
     cout << "생성자 수행 " << getName() << "," << getAge() << endl;
 }
