@@ -42,5 +42,4 @@ function render()
 {
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.drawArrays(gl.LINE_LOOP, 0, 5);   
-    //TRIANGLE_FAN//첫 번째 점이 부채의 중심, 무조건 부채의 중심부터 시작, 1,2,3 --> 1,3,4 --> 1,..., TRIANGLES//3개씩 끝어서 삼각형을 만들어라, TRIANGLE_STRIP//1,2,3좌표로 삼각형 그린 후 2,3,4좌표로 다음 삼각형 그린다.  차이 무조건 시험
 }
