@@ -85,7 +85,6 @@ int main(){
 
 15.
 #include <iostream>
-#include <iomanip>
 #include <array>
 #include <algorithm>
 using namespace std;
