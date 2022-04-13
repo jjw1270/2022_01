@@ -1,0 +1,117 @@
+1.
+a.O
+b.X
+c.O
+d.O
+e.O
+f.X // 생성자와 소멸자의 비대칭 실행 : 값에 의한 호출 시 매개변수의 생성자는 실행X 소멸자만 실행
+    // 주소에 의한 호출 시 생성자와 소멸자 둘다 실행X
+    // Reference를 이용해서도 해결할 수 있다
+g.O
+h.X // 한 개만 선언 가능
+i.O
+j.X  // 컴파일러가 디폴트 복사 생성자 삽입
+-------------------
+**일반복사와 깊은복사 차이점 알아두기**
+k.O  // 메모리를 별도로 동적 할당해야한다.
+l.X  // 메모리 공유는 얕은 복사
+m.X  // Lvalue
+n.O
+o.X  // 이동생성자나 move를 이용해 소유권 완전히 이동 가능
+p.O // lvalue -> rvalue
+q.O  // &&, *  두개 사용
+
+2.값에 의한 호출 ( call by value)
+
+3.이미 존재하는 원본 변수에 대한 별명을 선언,
+  참조 변수는 원본 변수로 초기화 해야 한다,
+
+4.const로 선언된 원본 변수와 참조변수의 자료형이 다르다
+
+5.10  10
+6.100 100 100
+
+7.
+void swap(int a, int b); // call by value 하면 값이 안 바뀐다. X
+void swap(int& a, int& b); // call by reference 레퍼런스를 써야 한다. O
+void swap(int *a, int *b); // swap(&a, &b)로 호출 했을경우에
+                                 call by address 포인트를 사용해도 된다.
+
+8.
+f(3)=60;
+
+9.
+- 객체로 초기화하여 객체가 생성될 때
+- 값에 의한 호출로 객체가 전달될 때
+- 함수에서 객체를 리턴할 때(오버레드가 크면 할 수도 안할 수 도있음 컴파일러마다 다름)
+Person son = father;  // 객체로 초기화하여 객체가 생성될 때 복사 생성자 호출
+void f(Person person){}  // 값에 의한 호출로 객체가 전달될 때
+Person g(){
+ Person mother(2);
+ return mother;
+}
+-----(main)--
+Person rst = g();  // 함수에서 객체를 리턴할 때
+
+10.
+Sample a;
+Sample &ref = a;
+
+11.Sample(Sample &s);
+
+12.
+#include <cstring>
+Person(const Person &p);
+Person::Person (const Person &p){
+	this -> id = p.id;
+	int len = strlen(p.name);
+	this -> name = new char [len+1];  // 길이+1,  끝에 null이 들어가서 +1을 해줘야 함
+	strcpy(this -> name, p.name);
+}  // 왜 3줄씩이냐 사용하냐
+ //? char *name  일때 this->name = p.name을 하면 메모리공간이 공유가 된다.
+ // 공유 방지를 위해 위처럼 길게 사용한다.
+
+char *name이 string일 경우 - 깊은복사를 사용한다.
+Person::Person (const Person &p){
+	this->name = p.name;
+	this->id = p.id;
+
+13.Person(Person&& p);
+35페이지
+
+14.
+C++ programming
+Cp+ programming
+
+15.
+while(1){
+        int n = fstr.find(fhas);
+        fstr.replace(n, fhas.length(), fre);
+
+        if(fstr.find(fhas) == -1){
+            fresult = true;
+            break;
+        }
+}
+
+16.
+Accumulator & Accumulator::add(int n){
+    value += n;
+
+    return *this; // Call by Reference 이기 때문에 *를 써서 값으로 리턴해야 한다.
+}
+17.
+void increaseBy(Account &facc, int fin){  // 매개변수로 레퍼런스(&)가 갈때
+    facc.setBalance(facc.getBalance() + fin);
+}
+18.
+void message_print(string&& a){  // Rvalue 레퍼런스를 파라미터로 받을 때 '&&' 를 쓴다
+    cout << "message = " << a << endl;
+}
+19.
+
+20.
+
+
+
+

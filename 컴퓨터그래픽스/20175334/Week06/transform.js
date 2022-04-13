@@ -6,7 +6,7 @@ var axis = 0;
 var theta = [0, 0, 0];
 var thetaLoc;    //uniform으로 보내기위해
 var disp1 = [0,0,0];
-var disp1loc;
+var disp1Loc;
 
 var rotation = false;
 
@@ -19,6 +19,8 @@ window.onload = function init()
         alert("WebGL isn't available!");
     }
 
+    generateColorCube();
+    generateHexaPyramid();
     generateColorCube();
     generateHexaPyramid();
 
@@ -55,7 +57,7 @@ window.onload = function init()
 
     thetaLoc = gl.getUniformLocation(program, "theta");
     //gl.uniform3fv(thetaLoc, theta);
-    disp1loc = gl.getUniformLocation(program, "disp1");
+    disp1Loc = gl.getUniformLocation(program, "disp1");
     //gl.uniform3fv(disp1Loc, disp1)p;
 
     // Event listeners for buttons
@@ -84,13 +86,25 @@ function render() {
     gl.uniform3fv(thetaLoc, theta)
 
     //gl.drawArrays(gl.LINES, 0, 6);
+    disp1[0] = 0.5;
     disp1[1] = -0.5;
-    gl.uniform3fv(disp1loc, disp1);
+    gl.uniform3fv(disp1Loc, disp1);
     gl.drawArrays(gl.TRIANGLES, 0, 36);    //위에서 line6개 그렸음으로 6부터 시작
 
-    disp1[1] = -0.5;
-    gl.uniform3fv(disp1loc, disp1);
+    disp1[0] = 0.5;
+    disp1[1] = 0.5;
+    gl.uniform3fv(disp1Loc, disp1);
     gl.drawArrays(gl.TRIANGLES, 36, 36);    //위에서 line6개 그렸음으로 6부터 시작
+
+    disp1[0] = -0.5;
+    disp1[1] = -0.5;
+    gl.uniform3fv(disp1Loc, disp1);
+    gl.drawArrays(gl.TRIANGLES, 72, 36);
+
+    disp1[0] = -0.5;
+    disp1[1] = 0.5;
+    gl.uniform3fv(disp1Loc, disp1);
+    gl.drawArrays(gl.TRIANGLES, 108, 36);
 
     window.requestAnimationFrame(render);
 }
@@ -149,7 +163,6 @@ function generateHexaPyramid() {
         vec4( 0.5,  0.5, 0.866, 1.0),
         vec4( 0.0, -1.0, 0.0, 1.0)
     ];
-
     vertexColor = [
         vec4(0.5, 0.5, 0.5, 1.0),   // gray
         vec4(1.0, 0.0, 0.0, 1.0),   // red
@@ -160,34 +173,33 @@ function generateHexaPyramid() {
         vec4(1.0, 0.0, 1.0, 1.0),   // magenta
         vec4(0.0, 0.0, 0.0, 1.0)   // black
     ];
-
-for(var i = 1; i<6; i++){
+    for(var i = 1; i<6; i++){
+        points.push(vertexPos[0]);
+        colors.push(vertexColor[0]);
+        points.push(vertexPos[i]);
+        colors.push(vertexColor[i]);
+        points.push(vertexPos[i+1]);
+        colors.push(vertexColor[i+1]);
+    }
     points.push(vertexPos[0]);
     colors.push(vertexColor[0]);
-    points.push(vertexPos[i]);
-    colors.push(vertexColor[i]);
-    points.push(vertexPos[i+1]);
-    colors.push(vertexColor[i+1]);
-}
-points.push(vertexPos[0]);
-colors.push(vertexColor[0]);
-points.push(vertexPos[6]);
-colors.push(vertexColor[6]);
-points.push(vertexPos[1]);
-colors.push(vertexColor[1]);
-for(var i = 1; i<6; i++){
+    points.push(vertexPos[6]);
+    colors.push(vertexColor[6]);
+    points.push(vertexPos[1]);
+    colors.push(vertexColor[1]);
+    for(var i = 1; i<6; i++){
+        points.push(vertexPos[7]);
+        colors.push(vertexColor[7]);
+        points.push(vertexPos[i+1]);
+        colors.push(vertexColor[i+1]);
+        points.push(vertexPos[i]);
+        colors.push(vertexColor[i]);
+    }
     points.push(vertexPos[7]);
     colors.push(vertexColor[7]);
-    points.push(vertexPos[i+1]);
-    colors.push(vertexColor[i+1]);
-    points.push(vertexPos[i]);
-    colors.push(vertexColor[i]);
-}
-points.push(vertexPos[7]);
-colors.push(vertexColor[7]);
-points.push(vertexPos[1]);
-colors.push(vertexColor[1]);
-points.push(vertexPos[6]);
-colors.push(vertexColor[6]);
+    points.push(vertexPos[1]);
+    colors.push(vertexColor[1]);
+    points.push(vertexPos[6]);
+    colors.push(vertexColor[6]);
 
 }

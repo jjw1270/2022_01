@@ -1,0 +1,22 @@
+05
+5-A
+	Rec *p = &r;
+	
+B
+	p -> wirte();
+	(*p).wirte();
+C
+	Rec *arr = new Rec[4];
+D
+	unique_ptr<Rec> arr = make_unique<Rec []>(4);
+E
+	delete [] arr;
+F
+	(p+1) -> wirte();
+	(*p+1).write();
+G
+	Rec *dim = new Rec[3] { Rec(1,2), Rec(3,4), Rec(5,6) };
+H
+	for(Rec a : array){
+		a.write();
+	}

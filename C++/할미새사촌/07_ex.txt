@@ -1,0 +1,62 @@
+1.
+A. O
+B. X  // 리턴타입은 함수 중복과 무관하다.
+C. O
+D. X  // 끝쪽에 몰려 선언되어야 한다.
+E. O
+F. O
+G. X  // 중복함수와 디폴트 매개변수는 함께 사용 불가하다.
+H. O
+I. X  //static멤버함수에서 this 사용 불가 하다.
+J. X  //객체이름이나 객체 포인터로 사용 및 접근 가능
+K. O  //static멤버는 객체이름이나 객체 포인터로 사용 가능
+L. O  //inline으로 선언 시 전역 공간에 선언할 필요가 없다.
+
+2.
+B, D, E
+
+3.
+sum(1, 2);
+sum(1, 2, 3);
+
+4.
+sum();
+sum(1.0);
+sum(1.0, 2.0);
+
+5.
+디폴트 매개변수는 끝 쪽에 몰려 선언되어야 함
+
+6.
+double sum(double a, double b, double c=0){  //double은 int형을 받는다
+	return a+b+c;
+}
+
+7.
+void fillLine(int n, char c='*'){
+	for(int i=0; i<n; i++) cout << 'c';
+	cout << endl;
+}
+
+8.
+A. 
+Test::print();
+
+Test t;
+t.print();
+
+B. int Test::cnt = 1;
+
+C. inline static int cnt;  //inline으로 선언하면 static멤버변수에 대한 외부 선언을 하지 않아도 된다.
+
+9.
+Person(int id=1, double weight=20.5, string name="Grace") : id{id}, weight{weight}, name{name}{};
+
+10.과제
+
+11. sizeof(int) 는 4
+int add(
+
+12.
+
+

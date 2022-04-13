@@ -12,7 +12,14 @@
         void main() {
             // Compute the sines and cosines of theta for each of
             // the three axes in one computation
+            
             vec3 angles = radians(theta);
+            if(disp1.x == -0.5 && disp1.y == 0.5){
+                angles = -angles;
+            }
+            else if(disp1.x == 0.5 && disp1.y == -0.5){
+                angles = -angles;
+            }
             vec3 c = cos(angles);
             vec3 s = sin(angles);
 
