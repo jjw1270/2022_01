@@ -7,9 +7,7 @@
 using std::string;
 
 namespace Bank{
-    enum class MENU {
-        DEPOSIT = 1, WITHDRAW, CHECK, QUIT
-    };
+    enum class MENU { DEPOSIT = 1, WITHDRAW, CHECK, QUIT };
 
     class Account{
         string name;
