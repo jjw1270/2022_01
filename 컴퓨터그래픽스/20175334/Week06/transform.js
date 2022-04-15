@@ -7,6 +7,7 @@ var theta = [0, 0, 0];
 var thetaLoc;    //uniform으로 보내기위해
 var disp1 = [0,0,0];
 var disp1Loc;
+var trMatrixLoc;
 
 var rotation = false;
 
@@ -23,6 +24,25 @@ window.onload = function init()
     generateHexaPyramid();
     generateColorCube();
     generateHexaPyramid();
+
+    var trball = trackball(canvas.width, canvas.height);
+    var bMouseDown = false;
+
+    canvas.addEventListener("mousedown", function(event) {
+        trball.start(event.clientX, event.clientY);
+
+        bMouseDown = true;
+    });
+    canvas.addEventListener("mouseup", function(event) {
+        bMouseDown = false;
+    });
+    canvas.addEventListener("mousemove", function(event) {
+        if( bMouseDown) {
+            trball.end(event.clientX, event.clientY);
+
+            gl.uniformMatrix4fv(trMatrixLoc, false, trball.rotationMatrix);
+        }
+    });
 
     // Configure WebGL
     gl.viewport(0, 0, canvas.width, canvas.height);
@@ -59,6 +79,8 @@ window.onload = function init()
     //gl.uniform3fv(thetaLoc, theta);
     disp1Loc = gl.getUniformLocation(program, "disp1");
     //gl.uniform3fv(disp1Loc, disp1)p;
+    trMatrixLoc = gl.getUniformLocation(program, "trMatrix");
+    gl.uniformMatrix4fv(trMatrixLoc, false, trball.rotationMatrix);
 
     // Event listeners for buttons
     document.getElementById("xButton").onclick = function () {
@@ -83,27 +105,34 @@ function render() {
     if( rotation ) {
         theta[axis] += 2.0;
     }
-    gl.uniform3fv(thetaLoc, theta)
 
     //gl.drawArrays(gl.LINES, 0, 6);
     disp1[0] = 0.5;
     disp1[1] = -0.5;
     gl.uniform3fv(disp1Loc, disp1);
+    theta[axis] = theta[axis];
+    gl.uniform3fv(thetaLoc, theta);
     gl.drawArrays(gl.TRIANGLES, 0, 36);    //위에서 line6개 그렸음으로 6부터 시작
 
     disp1[0] = 0.5;
     disp1[1] = 0.5;
     gl.uniform3fv(disp1Loc, disp1);
+    theta[axis] = -theta[axis];
+    gl.uniform3fv(thetaLoc, theta);
     gl.drawArrays(gl.TRIANGLES, 36, 36);    //위에서 line6개 그렸음으로 6부터 시작
 
     disp1[0] = -0.5;
     disp1[1] = -0.5;
     gl.uniform3fv(disp1Loc, disp1);
+    theta[axis] = theta[axis];
+    gl.uniform3fv(thetaLoc, theta);
     gl.drawArrays(gl.TRIANGLES, 72, 36);
 
     disp1[0] = -0.5;
     disp1[1] = 0.5;
     gl.uniform3fv(disp1Loc, disp1);
+    theta[axis] = -theta[axis];
+    gl.uniform3fv(thetaLoc, theta);
     gl.drawArrays(gl.TRIANGLES, 108, 36);
 
     window.requestAnimationFrame(render);

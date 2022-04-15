@@ -7,6 +7,7 @@
         attribute vec4 vColor;
         uniform vec3 theta;   //모든 꼭지점에 동일한 theta값 들어감   //x,y,z 축 회전값 들어옴
         uniform vec3 disp1;
+        uniform mat4 trMatrix;
         varying vec4 fColor;
 
         void main() {
@@ -14,12 +15,12 @@
             // the three axes in one computation
             
             vec3 angles = radians(theta);
-            if(disp1.x == -0.5 && disp1.y == 0.5){
+            /*if(disp1.x == -0.5 && disp1.y == 0.5){
                 angles = -angles;
             }
             else if(disp1.x == 0.5 && disp1.y == -0.5){
                 angles = -angles;
-            }
+            }*/
             vec3 c = cos(angles);
             vec3 s = sin(angles);
 
@@ -49,7 +50,7 @@
                         0.0, 0.0, 1.0, 0.0,
                         disp1.x, disp1.y, disp1.z, 1.0);
 
-            gl_Position = tr * rz * ry * rx * sc * vPosition;    //M = TRS
+            gl_Position = tr * rz * ry * rx * sc * trMatrix * vPosition;    //M = TRS
             fColor = vColor;
         }
         </script>
@@ -66,6 +67,7 @@
         <script type="text/javascript" src="../Common/webgl-utils.js"></script>
         <script type="text/javascript" src="../Common/initShaders.js"></script>
         <script type="text/javascript" src="../Common/MV.js"></script>
+        <script type="text/javascript" src="../trackball.js"></script>
         <script type="text/javascript" src="transform.js"></script>
     </head>
     <body>
