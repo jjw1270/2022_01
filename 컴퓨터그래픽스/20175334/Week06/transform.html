@@ -50,7 +50,7 @@
                         0.0, 0.0, 1.0, 0.0,
                         disp1.x, disp1.y, disp1.z, 1.0);
 
-            gl_Position = tr * rz * ry * rx * sc * trMatrix * vPosition;    //M = TRS
+            gl_Position = trMatrix *tr *  rz * ry * rx * sc * vPosition;    //M = TRS
             fColor = vColor;
         }
         </script>
