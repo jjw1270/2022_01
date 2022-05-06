@@ -1,0 +1,25 @@
+3.
+Sample &refa = a;
+
+4.
+Sample(const Sample& s);
+
+5.
+Person(const Person& p) { 
+        cout << "복사생성자" <<endl;
+        this -> id = p.id;
+        int len = strlen(p.name);
+        this -> name = new char[len + 1];
+        strcpy(this -> name, p.name);
+};
+
+6.
+Person(Person&& p) { 
+        cout << "이동생성자"<<endl;
+        this -> id = p.id;
+        p.id = 0;
+        this -> name = p.name;
+        p.name = nullptr;
+};
+
+9.
