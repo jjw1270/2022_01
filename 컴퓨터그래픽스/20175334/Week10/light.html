@@ -48,7 +48,7 @@
 
                 float d = length(lightVec);
                 float atten = 1.0 / (kAtten[0] + kAtten[1]*d + kAtten[2]*d*d);
-
+                
                 //spotlight
                 float spotDot = max(dot(normalize(spotDir), -L), 0.0);
                 if(spotDot > 0.0)

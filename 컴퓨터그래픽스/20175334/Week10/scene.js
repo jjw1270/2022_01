@@ -132,7 +132,7 @@ window.onload = function init()
 };
 
 function setLighting(program) {
-    //var lightSrc = [0.0, 1.0, 0.0, 0.0];
+    var lightSrc = [0.0, 1.0, 0.0, 0.0];
     var lightAmbient = [0.0, 0.0, 0.0, 1.0];
     var lightDiffuse = [1.0, 1.0, 1.0, 1.0];
     var lightSpecular = [1.0, 1.0, 1.0, 1.0];
@@ -147,7 +147,6 @@ function setLighting(program) {
 
     lightSrcLoc = gl.getUniformLocation(program, "lightSrc");
     gl.uniform4fv(lightSrcLoc, lightSrc);
-    gl.uniform4fv(gl.getUniformLocation(program, "lightSrc"), lightSrc);
     gl.uniform3f(gl.getUniformLocation(program, "kAtten"), 0.2, 0.2, 0.2);
     gl.uniform3f(gl.getUniformLocation(program, "spotDir"), 0.0, -1.0, 0.0);
     gl.uniform1f(gl.getUniformLocation(program, "spotExp"), 5.0);

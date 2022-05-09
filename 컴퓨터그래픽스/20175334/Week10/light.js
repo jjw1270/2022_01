@@ -134,15 +134,15 @@ window.onload = function init()
 };
 
 function setLighting(program) {
-    var lightSrc = [-1.0, 1.0, 0.0, 1.0];
+    var lightSrc = [-1.0, 1.0, 0.0, 1.0];    //빛의 위치   x,y,z,w(point or vector)
     var lightAmbient = [0.2, 0.2, 0.2, 1.0];
     var lightDiffuse = [1.0, 1.0, 1.0, 1.0];
     var lightSpecular = [1.0, 1.0, 1.0, 1.0];
 
-    var matAmbient = [1.0, 0.0, 0.0, 1.0];
-    var matDiffuse = [0.0, 1.0, 1.0, 1.0];
-    var matSpecular = [1.0, 0.0, 1.0, 1.0];
-    var matShininess = 100.0;
+    var matAmbient = [0.2, 0.2, 0.2, 1.0];
+    var matDiffuse = [1.0, 1.0, 1.0, 1.0];
+    var matSpecular = [1.0, 1.0, 1.0, 1.0];
+    var matShininess = 100.0;      //작아질수록 지수승이 작아져서 꼭지점이 spotlight에 들어갈 확률이 높아진다
 
     var lightSrcLoc = gl.getUniformLocation(program, "lightSrc");
     gl.uniform4fv(lightSrcLoc, lightSrc);
@@ -151,7 +151,7 @@ function setLighting(program) {
     var spotDirLoc = gl.getUniformLocation(program, "spotDir");
     gl.uniform3f(spotDirLoc, 1.0, -1.0, 0.0);
     var spotExpLoc = gl.getUniformLocation(program, "spotExp");
-    gl.uniform1f(spotExpLoc, 5.0);
+    gl.uniform1f(spotExpLoc, 5.0);     //spotExp 지수승 커질수록 스팟의 각도가 줄어든다
 
     var lightAmbientLoc = gl.getUniformLocation(program, "lightAmbient");
     gl.uniform4fv(lightAmbientLoc, lightAmbient);
