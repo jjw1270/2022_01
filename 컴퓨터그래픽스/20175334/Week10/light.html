@@ -10,8 +10,10 @@
         uniform mat4 projectionMatrix;
         varying vec4 fColor;
 
-        uniform vec4 lightDir, lightAmbient, lightDiffuse;
-        uniform vec4 matAmbient, matDiffuse;
+        uniform vec3 eyePos, kAtten, spotDir;
+        uniform vec4 lightSrc, lightAmbient, lightDiffuse, lightSpecular;
+        uniform vec4 matAmbient, matDiffuse, matSpecular;
+        uniform float matShininess, spotExp;
 
         void main() {
             gl_Position = projectionMatrix * viewMatrix * modelMatrix * vPosition;
@@ -20,11 +22,43 @@
             vec4 ambient = lightAmbient * matAmbient;
 
             vec3 N = normalize(mat3(modelMatrix) * vNormal.xyz);
-            vec3 L = normalize(lightDir.xyz);
-            float kd = max(dot(L, N), 0.0);
-            vec4 diffuse = kd * lightDiffuse * matDiffuse;
+            vec3 worldPos = (modelMatrix * vPosition).xyz;
+            vec3 V = normalize(eyePos - worldPos);
 
-            fColor = ambient + diffuse;
+            if(lightSrc.w == 0.0){   //directional light
+                vec3 L = normalize(lightSrc.xyz);
+                float kd = max(dot(L, N), 0.0);
+                vec4 diffuse = kd * lightDiffuse * matDiffuse;
+
+                vec3 H = normalize(L + V);
+                float ks = pow(max(dot(N, H), 0.0), matShininess);
+                vec4 specular = ks * lightSpecular * matSpecular;
+
+                fColor = ambient + diffuse + specular;
+            }
+            else {                   //point light
+                vec3 lightVec = lightSrc.xyz - worldPos;
+                vec3 L = normalize(lightVec);
+                float kd = max(dot(L, N), 0.0);
+                vec4 diffuse = kd * lightDiffuse * matDiffuse;
+
+                vec3 H = normalize(L + V);
+                float ks = pow(max(dot(N, H), 0.0), matShininess);
+                vec4 specular = ks * lightSpecular * matSpecular;
+
+                float d = length(lightVec);
+                float atten = 1.0 / (kAtten[0] + kAtten[1]*d + kAtten[2]*d*d);
+
+                //spotlight
+                float spotDot = max(dot(normalize(spotDir), -L), 0.0);
+                if(spotDot > 0.0)
+                    atten *= pow(spotDot, spotExp);
+                else   
+                    atten = 0.0;
+                
+                fColor = ambient + atten * (diffuse + specular);
+            }
+
             fColor.a = 1.0;
         }
         </script>

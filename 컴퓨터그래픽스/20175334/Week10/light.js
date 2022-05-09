@@ -134,30 +134,48 @@ window.onload = function init()
 };
 
 function setLighting(program) {
-    var lightDir = [-1.0, 1.0, 0.0, 0.0];
-    var lightAmbient = [0.8, 0.8, 0.8, 1.0];
+    var lightSrc = [-1.0, 1.0, 0.0, 1.0];
+    var lightAmbient = [0.2, 0.2, 0.2, 1.0];
     var lightDiffuse = [1.0, 1.0, 1.0, 1.0];
+    var lightSpecular = [1.0, 1.0, 1.0, 1.0];
 
-    var matAmbient = [0.2, 0.2, 0.2, 1.0];
+    var matAmbient = [1.0, 0.0, 0.0, 1.0];
     var matDiffuse = [0.0, 1.0, 1.0, 1.0];
+    var matSpecular = [1.0, 0.0, 1.0, 1.0];
+    var matShininess = 100.0;
 
-    var lightDirLoc = gl.getUniformLocation(program, "lightDir");
-    gl.uniform4fv(lightDirLoc, lightDir);
+    var lightSrcLoc = gl.getUniformLocation(program, "lightSrc");
+    gl.uniform4fv(lightSrcLoc, lightSrc);
+    var attenLoc = gl.getUniformLocation(program, "kAtten");
+    gl.uniform3f(attenLoc, 0.2, 0.2, 0.2);
+    var spotDirLoc = gl.getUniformLocation(program, "spotDir");
+    gl.uniform3f(spotDirLoc, 1.0, -1.0, 0.0);
+    var spotExpLoc = gl.getUniformLocation(program, "spotExp");
+    gl.uniform1f(spotExpLoc, 5.0);
+
     var lightAmbientLoc = gl.getUniformLocation(program, "lightAmbient");
     gl.uniform4fv(lightAmbientLoc, lightAmbient);
     var lightDiffuseLoc = gl.getUniformLocation(program, "lightDiffuse");
     gl.uniform4fv(lightDiffuseLoc, lightDiffuse);
+    var lightSpecularLoc = gl.getUniformLocation(program, "lightSpecular");
+    gl.uniform4fv(lightSpecularLoc, lightSpecular);
 
     var matAmbientLoc = gl.getUniformLocation(program, "matAmbient");
     gl.uniform4fv(matAmbientLoc, matAmbient);
     var matDiffuseLoc = gl.getUniformLocation(program, "matDiffuse");
     gl.uniform4fv(matDiffuseLoc, matDiffuse);
+    var matSpecularLoc = gl.getUniformLocation(program, "matSpecular");
+    gl.uniform4fv(matSpecularLoc, matSpecular);
+    var matShininessLoc = gl.getUniformLocation(program, "matShininess");
+    gl.uniform1f(matShininessLoc, matShininess);
+    var eyePosLoc = gl.getUniformLocation(program, "eyePos");
+    gl.uniform3fv(eyePosLoc, flatten(eye));
 };
 
 function render() {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    if( rotation )  theta[axis] += 2;
+    if( rotation )  theta[axis] += 1;
     var rx = rotateX(theta[0]);
     var ry = rotateY(theta[1]);
     var rz = rotateZ(theta[2]);
