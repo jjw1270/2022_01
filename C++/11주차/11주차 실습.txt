@@ -1,0 +1,188 @@
+2.
+B, D, E
+
+3.
+cout << sum(1,2,20) << endl;
+cout << sum(1,2) << endl;
+
+4.
+cout << sum(3.1, 5.5) << endl;
+cout << sum(4.1) << endl;
+cout << sum() << endl;
+
+5.
+디폴트 매개변수가 끝에 몰려있지 않아서
+int calc(int a, int c, int b = 5, int d = 0)
+
+6.
+double sum(double a, double b, double c = 0.0) {
+    return a + b + c;
+}
+
+7.
+void fillLine(int n, char c = '*'){
+    for(int i = 0; i < n; i++) cout << c;
+    cout << endl;
+} 
+
+8.
+A.
+Test::print();
+또는
+Test t;
+t.print();
+B.
+int Test::cnt = 5;
+C.
+class Test {
+    public:
+        inline static int cnt = 5;  //-std=c++17
+        static void print();
+};
+
+9.
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Person
+{
+    int id;
+    double weight;
+    string name;
+
+public:
+    Person(int id = 1, string name = "Grace", double weight = 20.5) :
+        id{id}, name{name}, weight{weight} {};
+    void show() { cout << id << ' ' << weight << ' ' << name << endl; }
+};
+
+int main()
+{
+    Person grace, ashley(2, "Ashley"), helen(3, "Helen", 32.5);
+    grace.show();
+    ashley.show();
+    helen.show();
+}
+
+10.
+int big(int a, int b, int max = 100){
+    int m = a > b ? a : b;
+    return m > max ? max: m;
+}
+
+11.
+#include <iostream>
+using namespace std;
+
+int add(int *ar, int num, int *ar2 = nullptr)
+{
+    int tot = 0;
+    for(int i = 0; i<num; i++)
+        tot += ar[i];
+    if(ar2 != nullptr){
+        for(int i = 0; i<num; i++)
+            tot += ar2[i];
+    }
+    return tot;
+}
+
+int main()
+{
+    int a[] = {1, 2, 3, 4, 5};
+    int b[] = {6, 7, 8, 9, 10};
+    int c = add(a, sizeof(a) / sizeof(int));    //배열 a의 정수를 size 인덱스까지 모두 더한 값 리턴
+    int d = add(a, sizeof(a) / sizeof(int), b); //배열 a, b의 정수를 size 인덱스까지 모두 더한 값 리턴
+    cout << c << endl;                          // 15 출력
+    cout << d << endl;                          // 55 출력
+}
+
+## 포인터 변수(정수형)를 sizeof 하면 4byte다! 배열의 크기 아님!
+
+12.미완
+#include <iostream>
+using namespace std;
+
+class ArrayUtil
+{
+public:
+    // s1과 s2를 연결한 새로운 배열을 동적 생성하여 리턴
+    static int *concat(int s1[], int size1, int s2[], int size2, int &retSize);
+    // s1에서 s2에 있는 숫자를 모두 삭제한 새로운 배열을 동적 생성하여 리턴
+    static int *remove(int s1[], int size1, int s2[], int size2, int &retSize);
+};
+// concat 구현합니다
+//매개변수의 배열을 포인터로 구현해도 된다 (int *s1, ....)
+int* ArrayUtil::concat(int s1[], int size1, int s2[], int size2, int &retSize){
+    retSize = size1 + size2;
+    int *p = new int[retSize];
+    if(!p) return nullptr;    //포인터로 리턴하기때문
+    
+    for(int i = 0; i < size1; i++){
+        *(p+i) = *(s1+i);
+    }
+    for(int i = 0; i < size2; i++){
+        *(p+i+size1) = *(s2+i);
+    }
+    return p;
+}
+// remove() 구현합니다.
+int* ArrayUtil::remove(int s1[], int size1, int s2[], int size2, int &retSize){
+    int *p = new int[size1];  //max
+    if(!p) {
+        retSize = 0;
+        return nullptr;
+    }
+    int len = 0;               //같지 않은 요소들이 몇 개인지
+    for(int i = 0; i < size1; i++){
+        int j;
+        for(j = 0; j < size2; j++){
+            if(*(s1+i) == *(s2+j))
+                break;
+        }
+        if(j == size2) { //일치하는게 없으면 배열에 저장
+            p[len] = *(s1+i);
+            len++;
+        }//else{ //같은 요소가 있으면 }
+    }/////////////////////
+    retSize = len;
+    int *res = new int[retSize];
+    res = p;
+    delete [] p;
+    return res;
+}
+
+int main()
+{
+    int xcount = 0, ycount = 0;
+    int *x, *y;
+
+    // x배열의 원소의 개수(1~5)를 입력 받는다.
+    cout << "x배열의 원소(1~5)는 몇 개 ? ";
+    cin >> xcount;
+    //입력 받은 수만큼 x배열을 동적 생성한다. 
+    x = new int[xcount];
+    //정수를 입력 받아 x배열에 저장한다.
+
+    // y배열의 원소의 개수(1~5)를 입력 받는다. 
+    //입력 받은 수만큼 y배열을 동적 생성한다. 
+    //정수를 입력 받아 y배열에 저장한다.
+
+    int retsize = 0;
+
+    // concat() 함수를 호출한다.
+
+    cout << "\nx배열과 y배열을 연결한 배열은 ";
+    for (int i = 0; i < retsize; i++)
+        cout << conarr[i] << ' ';
+    cout << endl;
+
+    // remove() 함수를 호출한다.
+
+    cout << "\nx배열에서 y배열의 원소를 삭제한 결과, x배열의 개수는 " << retsize << "개, ";
+    for (int i = 0; i < retsize; i++)
+        cout << remarr[i] << ' ';
+    cout << endl;
+
+    //동적 할당된 모든 변수를 해제 한다.
+}
