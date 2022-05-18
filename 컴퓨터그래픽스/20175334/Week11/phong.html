@@ -1,42 +1,43 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>20175334 장윤제 - Wireframe</title>
+        <title>20175334 장윤제 - Phong Shading</title>
         <script id="vertex-shader" type="x-shader/x-vertex">
         attribute vec4 vPosition;
         attribute vec4 vNormal;
         uniform mat4 modelMatrix, viewMatrix, projectionMatrix;
-        varying vec4 fColor;
+
+        varying vec3 fNormal, fWorldPos;
+
+        void main() {
+            gl_Position = projectionMatrix * viewMatrix * modelMatrix * vPosition;
+        
+            fNormal = normalize(mat3(modelMatrix) * vNormal.xyz);
+            fWorldPos = (modelMatrix * vPosition).xyz;
+        }
+        </script>
+
+        <script id="fragment-shader" type="x-shader/x-fragment">
+        precision mediump float;
+        varying vec3 fNormal, fWorldPos;
 
         uniform vec3 eyePos;
         uniform vec4 lightSrc, ambientProduct, diffuseProduct, specularProduct;
         uniform float shininess;
 
         void main() {
-            gl_Position = projectionMatrix * viewMatrix * modelMatrix * vPosition;
-        
-            vec3 N = normalize(mat3(modelMatrix) * vNormal.xyz);
+            vec3 N = normalize(fNormal);
             vec3 L = normalize(lightSrc.xyz);
             float kd = max(dot(L, N), 0.0);
             vec4 diffuse = kd * diffuseProduct;
 
-            vec3 worldPos = (modelMatrix * vPosition).xyz;
-            vec3 V = normalize(eyePos - worldPos);
+            vec3 V = normalize(eyePos - fWorldPos);
             vec3 H = normalize(L + V);
             float ks = pow(max(dot(N, H), 0.0), shininess);
             vec4 specular = ks * specularProduct;
 
-            fColor = ambientProduct + diffuse + specular;
-            fColor.a = 1.0;
-        }
-        </script>
-
-        <script id="fragment-shader" type="x-shader/x-fragment">
-        precision mediump float;
-        varying vec4 fColor;
-
-        void main() {
-            gl_FragColor = fColor;
+            gl_FragColor = ambientProduct + diffuse + specular;
+            gl_FragColor.a = 1.0;
         }
         </script>
 
@@ -44,14 +45,9 @@
         <script type="text/javascript" src="../Common/initShaders.js"></script>
         <script type="text/javascript" src="../Common/MV.js"></script>
         <script type="text/javascript" src="../trackball.js"></script>
-        <script type="text/javascript" src="smooth.js"></script>
+        <script type="text/javascript" src="phong.js"></script>
     </head>
     <body>
-        <div style="width: 512px; text-align: center;">
-            <input type="radio" id="flat" name="shading" checked> Flat Shading
-            <input type="radio" id="smooth" name="shading"> Gouraud Shading
-            <button id="change">Change</button>
-        </div>
         <div style="width: 512px; text-align: center;">
             Subdivision Level: 1 <input type="range" id="level" value="1" min="1" max="5" step="1"> 5
         </div>

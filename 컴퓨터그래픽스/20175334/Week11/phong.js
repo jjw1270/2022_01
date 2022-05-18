@@ -1,14 +1,11 @@
 var gl;
 var points = [];
 var normals = [];
-var fNormals = [];   // for flat shading
 
 var trballMatrix = mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
 
 //var modelMatrix;
 var modelMatrixLoc;
-
-var flatShading = true;
 
 window.onload = function init()
 {
@@ -68,7 +65,7 @@ window.onload = function init()
     //the associated attribute variable in our vertex shader
     var nbufferId = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, nbufferId);
-    gl.bufferData(gl.ARRAY_BUFFER, flatten(fNormals), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(normals), gl.STATIC_DRAW);
 
     var vNormal = gl.getAttribLocation(program, "vNormal");
     gl.vertexAttribPointer(vNormal, 4, gl.FLOAT, false, 0, 0);
@@ -102,36 +99,18 @@ window.onload = function init()
     gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
 
     // Event listeners for buttons
-    document.getElementById("change").onclick = function() {
-        if (document.getElementById("flat").checked)
-            flatShading = true;
-        else
-            flatShading = false;
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, nbufferId);
-        if (flatShading)
-            gl.bufferData(gl.ARRAY_BUFFER, flatten(fNormals), gl.STATIC_DRAW);
-        else
-            gl.bufferData(gl.ARRAY_BUFFER, flatten(normals), gl.STATIC_DRAW);
-        
-        render();
-    };
     document.getElementById("level").onchange = function(event) {
         var level = event.target.value;
 
         points = [];
         normals = [];
-        fNormals = [];
         generateTetrahedron(level);
-
+        
         gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
         gl.bufferData(gl.ARRAY_BUFFER, flatten(points), gl.STATIC_DRAW);
         gl.bindBuffer(gl.ARRAY_BUFFER, nbufferId);
-        if(flatShading)
-            gl.bufferData(gl.ARRAY_BUFFER, flatten(fNormals), gl.STATIC_DRAW);
-        else
-            gl.bufferData(gl.ARRAY_BUFFER, flatten(normals), gl.STATIC_DRAW);
-
+        gl.bufferData(gl.ARRAY_BUFFER, flatten(normals), gl.STATIC_DRAW);
+        
         render();
     };
 
@@ -202,13 +181,5 @@ function divideTriangle(a, b, c, level) {
         normals.push(vec4(b[0], b[1], b[2], 0.0));
         points.push(c);
         normals.push(vec4(c[0], c[1], c[2], 0.0));
-
-        var ab = subtract(b, a);
-        var ac = subtract(c, a);
-        var n = cross(ab, ac);
-        var normal = normalize(vec4(n[0], n[1], n[2], 0.0));
-        fNormals.push(normal);
-        fNormals.push(normal);
-        fNormals.push(normal);
     }
 }
