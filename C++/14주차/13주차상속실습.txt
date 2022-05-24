@@ -1,0 +1,30 @@
+09
+virtual의 차이점 시험 100%
+상속 문제 별로안나옴
+
+2.
+일반상속, 다중상속, 가상상속
+
+3.
+기본 클래스 멤버의 중복 상속
+virtual 키워드로 해결한다
+
+4.
+virtual
+
+5.
+class Statellite : public Rocket, public Computer { };
+
+6.
+A.
+생성자 A
+생성자 B
+
+B.
+생성자 A
+생성자 B10
+
+C.
+생성자 A32
+생성자 B32
+
