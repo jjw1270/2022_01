@@ -8,15 +8,17 @@ var modelMatrixLoc0, viewMatrixLoc0, modelMatrixLoc1, viewMatrixLoc1, modelMatri
 
 var trballMatrix = mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
 var vertCubeStart, numVertCubeTri, vertPyraStart, numVertPyraTri, vertGroundStart, numVertGroundTri;
+var vertBodyStart, numVertBodyTri;
 
-var eyePos = vec3(0.0, 2.0, 50.0);
+var eyePos = vec3(0.0, 1.0, 50.0);
 var atPos = vec3(0.0, 0.0, 0.0);
 var upVec = vec3(0.0, 1.0, 0.0);
-var cameraVec = vec3(0.0, -0.7071, -0.7071); // 1.0/Math.sqrt(2.0)
-//var cameraVec = vec3(0.0, 0.0, -1.0);
+var cameraVec = vec3(0.0, 0.0, -0.7071);
 
 var theta = 0;
 var prevTime = new Date();
+
+var isStart = false;
 
 const objectPos = [
     vec3(-3, 0, -5),    vec3(3, 0, -5),
@@ -44,30 +46,6 @@ window.onload = function init()
     generateTexGround();
     generateTexCube();
     generateHexaPyramid();
-
-    /*
-    // virtual trackball
-    var trball = trackball(canvas.width, canvas.height);
-    var mouseDown = false;
-
-    canvas.addEventListener("mousedown", function (event) {
-        trball.start(event.clientX, event.clientY);
-
-        mouseDown = true;
-    });
-
-    canvas.addEventListener("mouseup", function (event) {
-        mouseDown = false;
-    });
-
-    canvas.addEventListener("mousemove", function (event) {
-        if (mouseDown) {
-            trball.end(event.clientX, event.clientY);
-
-            trballMatrix = mat4(trball.rotationMatrix);
-        }
-    });
-    */
 
     // Configure WebGL
     gl.viewport(0, 0, canvas.width, canvas.height);
@@ -183,14 +161,11 @@ window.onload = function init()
     setTexture();
 
     // Event listeners for buttons
-    // document.getElementById("left").onclick = function () {
-    //     var sinTheta = Math.sin(0.1);
-    //     var cosTheta = Math.cos(0.1);
-    //     var newVecX = cosTheta*cameraVec[0] + sinTheta*cameraVec[2];
-    //     var newVecZ = -sinTheta*cameraVec[0] + cosTheta*cameraVec[2];
-    //     cameraVec[0] = newVecX;
-    //     cameraVec[2] = newVecZ;
-    // };
+    document.getElementById("start").onclick = function () {
+        if(!isStart){
+            isStart = true;
+        }
+    };
     // document.getElementById("right").onclick = function () {
     //     var sinTheta = Math.sin(0.1);
     //     var cosTheta = Math.cos(0.1);
@@ -226,39 +201,40 @@ window.onkeydown = function(event) {
         case 37:    // left arrow
         case 65:    // 'A'
         case 97:    // 'a'
-            var newVecX = cosTheta*cameraVec[0] + sinTheta*cameraVec[2];
-            var newVecZ = -sinTheta*cameraVec[0] + cosTheta*cameraVec[2];
-            cameraVec[0] = newVecX;
-            cameraVec[2] = newVecZ;
+            if(eyePos[0] > -3)
+                eyePos[0] -= 1;
             break;
         case 39:    // right arrow
         case 68:    // 'D'
         case 100:   // 'd'
-            var newVecX = cosTheta*cameraVec[0] - sinTheta*cameraVec[2];
-            var newVecZ = sinTheta*cameraVec[0] + cosTheta*cameraVec[2];
-            cameraVec[0] = newVecX;
-            cameraVec[2] = newVecZ;
+            if(eyePos[0] < 3)
+                eyePos[0] += 1;
             break;
-        case 38:    // up arrow
-        case 87:    // 'W'
-        case 119:   // 'w'
-            var newPosX = eyePos[0] + 0.5 * cameraVec[0];
-            var newPosZ = eyePos[2] + 0.5 * cameraVec[2];
-            if (newPosX > -10 && newPosX < 10 && newPosZ > -10 && newPosZ < 10 && !detectCollision(newPosX, newPosZ)) {
-                eyePos[0] = newPosX;
-                eyePos[2] = newPosZ;
+        case 32:  //space
+            if(!isStart){
+                isStart = true;
             }
             break;
-        case 40:    // down arrow
-        case 83:    // 'S'
-        case 115:   // 's'
-            var newPosX = eyePos[0] - 0.5 * cameraVec[0];
-            var newPosZ = eyePos[2] - 0.5 * cameraVec[2];
-            if (newPosX > -10 && newPosX < 10 && newPosZ > -10 && newPosZ < 10 && !detectCollision(newPosX, newPosZ)) {
-                eyePos[0] = newPosX;
-                eyePos[2] = newPosZ;
-            }
-            break;
+        // case 38:    // up arrow
+        // case 87:    // 'W'
+        // case 119:   // 'w'
+        //     var newPosX = eyePos[0] + 0.5 * cameraVec[0];
+        //     var newPosZ = eyePos[2] + 0.5 * cameraVec[2];
+        //     //if (newPosX > -10 && newPosX < 10 && newPosZ > -10 && newPosZ < 10 && !detectCollision(newPosX, newPosZ)) {
+        //         eyePos[0] = newPosX;
+        //         eyePos[2] = newPosZ;
+        //     //}
+        //     break;
+        // case 40:    // down arrow
+        // case 83:    // 'S'
+        // case 115:   // 's'
+        //     var newPosX = eyePos[0] - 0.5 * cameraVec[0];
+        //     var newPosZ = eyePos[2] - 0.5 * cameraVec[2];
+        //     //if (newPosX > -10 && newPosX < 10 && newPosZ > -10 && newPosZ < 10 && !detectCollision(newPosX, newPosZ)) {
+        //         eyePos[0] = newPosX;
+        //         eyePos[2] = newPosZ;
+        //     //}
+            // break;
     }
     render();
 };
@@ -288,7 +264,7 @@ function setLighting(program) {
 
 function setTexture(){
     var image0 = new Image();
-    image0.src = "../images/road.bmp"
+    image0.src = "../images/brick2.bmp"
 
     var texture0 = gl.createTexture();
     gl.activeTexture(gl.TEXTURE0);
@@ -330,26 +306,24 @@ function render() {
     let elapsedTime = currTime.getTime() - prevTime.getTime();
     theta += (elapsedTime / 10);
     prevTime = currTime;
+
+    if(isStart){
+        eyePos[2] = eyePos[2] - elapsedTime/100;    //앞으로 이동
+        var rMatrix = mult(rotateX(5*theta), rotateZ(180));
+    }
+    else{
+        var rMatrix = rotateZ(180);
+    }
     
     var uColorLoc = gl.getUniformLocation(program0, "uColor");
     var diffuseProductLoc = gl.getUniformLocation(program1, "diffuseProduct");
     var textureLoc = gl.getUniformLocation(program2, "texture");
     
-    // draw the ground
+    // draw the ground infin
     gl.useProgram(program2);
     gl.uniform1i(textureLoc, 0);
-    //gl.uniform4f(uColorLoc, 0.8, 0.8, 0.8, 1.0);    // gray
-    //gl.uniform4f(diffuseProductLoc, 0.8, 0.8, 0.8, 1.0);
-
     gl.uniformMatrix4fv(modelMatrixLoc2, false, flatten(trballMatrix));
     gl.drawArrays(gl.TRIANGLES, vertGroundStart, numVertGroundTri);
-/*
-    gl.useProgram(program0);
-    gl.uniform4f(uColorLoc, 0.0, 0.0, 0.0, 1.0);    // black
-    //gl.uniform4f(diffuseProductLoc, 0.0, 0.0, 0.0, 1.0);  //black
-    gl.uniformMatrix4fv(modelMatrixLoc0, false, flatten(trballMatrix));
-    gl.drawArrays(gl.LINES, numVertCubeTri+numVertPyraTri+numVertGroundTri, numVertGroundLine);
-*/
 
 
     /*for (var z=-5; z<0; z+=2) {
@@ -395,81 +369,86 @@ function render() {
     }
     */
 
-        // draw a car
+        // draw a body
         gl.useProgram(program1);
         //gl.uniform1i(textureLoc, 1);
         //gl.uniform4f(uColorLoc, 1.0, 0.0, 0.0, 1.0);    // red
-        gl.uniform4f(diffuseProductLoc, 1.0, 0.0, 0.0,  1.0);
+        gl.uniform4f(diffuseProductLoc, 0.9, 0.4, 0.6, 1.0);
 
         //var rMatrix = mult(rotateY(theta), rotateZ(45));
-        var rMatrix = mult(rotateX(100*theta), rotateZ(180));
+        
 
-        modelMatrix = translate(0, 0, 0);
-        modelMatrix = mult(scalem(1.0,1.0,2.0), modelMatrix);
-        //modelMatrix = mult(trballMatrix, modelMatrix);
+        modelMatrix = translate(eyePos[0], eyePos[1]-1.2, eyePos[2]-2);
+        modelMatrix = mult(scalem(1.0,0.6,1.0), modelMatrix);
         gl.uniformMatrix4fv(modelMatrixLoc1, false, flatten(modelMatrix));
         gl.drawArrays(gl.TRIANGLES, vertCubeStart, numVertCubeTri);
 
-        // draw a wheel
+        // draw a ears
         gl.useProgram(program1);
         //gl.useProgram(program1);
         //gl.uniform4f(uColorLoc, 0.0, 0.0, 1.0, 0.5);    //translucent blue
-        gl.uniform4f(diffuseProductLoc, 0.0, 0.0, 0.0, 1.0);
+        gl.uniform4f(diffuseProductLoc, 1.0, 1.0, 1.0, 1.0);
         
-        modelMatrix = mult(translate(-2, -0.5, 0.6), rMatrix);
-        modelMatrix = mult(scalem(0.3,1.0,0.8), modelMatrix);
-        //modelMatrix = mult(trballMatrix, modelMatrix);
+        modelMatrix = rotateZ(170);
+        modelMatrix = mult(scalem(0.2,0.2,0.2), modelMatrix);
+        modelMatrix = mult(translate(eyePos[0]-0.3, eyePos[1]-0.6, eyePos[2]-1.7), modelMatrix);
         gl.uniformMatrix4fv(modelMatrixLoc1, false, flatten(modelMatrix));
-        gl.drawArrays(gl.TRIANGLES, vertCubeStart, numVertCubeTri);
+        gl.drawArrays(gl.TRIANGLES, vertPyraStart, numVertPyraTri);
 
-        modelMatrix = mult(translate(2, -0.5, 0.6), rMatrix);
-        modelMatrix = mult(scalem(0.3,1.0,0.8), modelMatrix);
-        //modelMatrix = mult(trballMatrix, modelMatrix);
+        modelMatrix = rotateZ(-170);
+        modelMatrix = mult(scalem(0.2,0.2,0.2), modelMatrix);
+        modelMatrix = mult(translate(eyePos[0]+0.3, eyePos[1]-0.6, eyePos[2]-1.7), modelMatrix);
         gl.uniformMatrix4fv(modelMatrixLoc1, false, flatten(modelMatrix));
-        gl.drawArrays(gl.TRIANGLES, vertCubeStart, numVertCubeTri);
+        gl.drawArrays(gl.TRIANGLES, vertPyraStart, numVertPyraTri);
 
-        modelMatrix = mult(translate(-2, -0.5, -1.6), rMatrix);
-        modelMatrix = mult(scalem(0.3,1.0,0.8), modelMatrix);
-        //modelMatrix = mult(trballMatrix, modelMatrix);
-        gl.uniformMatrix4fv(modelMatrixLoc1, false, flatten(modelMatrix));
-        gl.drawArrays(gl.TRIANGLES, vertCubeStart, numVertCubeTri);
-
-        modelMatrix = mult(translate(2, -0.5, -1.6), rMatrix);
-        modelMatrix = mult(scalem(0.3,1.0,0.8), modelMatrix);
-        //modelMatrix = mult(trballMatrix, modelMatrix);
-        gl.uniformMatrix4fv(modelMatrixLoc1, false, flatten(modelMatrix));
-        gl.drawArrays(gl.TRIANGLES, vertCubeStart, numVertCubeTri);
-
-        // draw a window
-        gl.useProgram(program0);
-        gl.uniform4f(uColorLoc, 0.0, 0.0, 1.0, 0.4);    //translucent blue
-
-        gl.disable(gl.DEPTH_TEST);
-        gl.enable(gl.BLEND);
-        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+        // draw a leg
+        gl.useProgram(program1);
+        //gl.useProgram(program1);
+        //gl.uniform4f(uColorLoc, 0.0, 0.0, 1.0, 0.5);    //translucent blue
+        gl.uniform4f(diffuseProductLoc, 1.0, 1.0, 0.0, 1.0);
         
-        //modelMatrix = translate(0, 1, 0);
-        modelMatrix = mult(scalem(1.0, 0.4, 1.0), translate(0, 1, 0));
-        //modelMatrix = mult(trballMatrix, modelMatrix);
-        gl.uniformMatrix4fv(modelMatrixLoc0, false, flatten(modelMatrix));
+        modelMatrix = rMatrix;
+        modelMatrix = mult(scalem(0.4,0.6,1.0), modelMatrix);
+        modelMatrix = mult(translate(eyePos[0]-0.4, eyePos[1]-1.8, eyePos[2]-2.5), modelMatrix);
+        gl.uniformMatrix4fv(modelMatrixLoc1, false, flatten(modelMatrix));
         gl.drawArrays(gl.TRIANGLES, vertCubeStart, numVertCubeTri);
 
-        gl.disable(gl.BLEND);
-        gl.enable(gl.DEPTH_TEST);
+        modelMatrix = rMatrix;
+        modelMatrix = mult(scalem(0.4,0.6,1.0), modelMatrix);
+        modelMatrix = mult(translate(eyePos[0]+0.4, eyePos[1]-1.8, eyePos[2]-2.5), modelMatrix);
+        gl.uniformMatrix4fv(modelMatrixLoc1, false, flatten(modelMatrix));
+        gl.drawArrays(gl.TRIANGLES, vertCubeStart, numVertCubeTri);
+
+        // // draw a ears
+        // gl.useProgram(program0);
+        // gl.uniform4f(uColorLoc, 0.0, 0.0, 1.0, 0.4);    //translucent blue
+
+        // gl.disable(gl.DEPTH_TEST);
+        // gl.enable(gl.BLEND);
+        // gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+        
+        // //modelMatrix = translate(0, 1, 0);
+        // modelMatrix = mult(scalem(1.0, 0.4, 1.0), translate(0, 1, 0));
+        // //modelMatrix = mult(trballMatrix, modelMatrix);
+        // gl.uniformMatrix4fv(modelMatrixLoc0, false, flatten(modelMatrix));
+        // gl.drawArrays(gl.TRIANGLES, vertCubeStart, numVertCubeTri);
+
+        // gl.disable(gl.BLEND);
+        // gl.enable(gl.DEPTH_TEST);
 
     window.requestAnimationFrame(render);
 }
-
-// function generatePlayer(){
-//     vertPlayerStart = points.length;
-//     numVertPlayerTri = 0;
-//     texQuad(1, 0, 3, 2);
-//     texQuad(2, 3, 7, 6);
-//     texQuad(3, 0, 4, 7);
-//     texQuad(4, 5, 6, 7);
-//     texQuad(5, 4, 0, 1);
-//     texQuad(6, 5, 1, 2);
-// }
+function playerBody() {   //사각뿔 두개 위아래로 이어붙이기
+    vertBodyStart = points.length;
+    numVertCubeTri = 0;
+    texQuad(1, 0, 3, 2);
+    texQuad(2, 3, 7, 6);
+    texQuad(3, 0, 4, 7);
+    texQuad(4, 5, 6, 7);
+    texQuad(5, 4, 0, 1);
+    texQuad(6, 5, 1, 2);
+}
+//////////////////////////////////////
 
 function generateTexCube() {
     vertCubeStart = points.length;
