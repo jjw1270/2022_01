@@ -368,12 +368,12 @@ function render() {
         // draw a hexa-pyramid
         gl.useProgram(program0);
         //gl.useProgram(program1);
-        gl.uniform4f(uColorLoc, 0.0, 0.0, 1.0, 0.5);    //translucent blue
+        gl.uniform4f(uColorLoc, 0.0, 0.0, 1.0, 0.5);    //translucent blue   //src_alpha값
         //gl.uniform4f(diffuseProductLoc, 0.0, 0.0, 1.0, 1.0);
 
         gl.disable(gl.DEPTH_TEST);
         gl.enable(gl.BLEND);
-        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);   //src_alpha = 0.3이면 배경 alpha = 0.7
         
         modelMatrix = mult(translate(-3, -0.5, z), rotateZ(180));
         modelMatrix = mult(trballMatrix, modelMatrix);
@@ -386,7 +386,7 @@ function render() {
         gl.drawArrays(gl.TRIANGLES, vertPyraStart, numVertPyraTri);
 
         gl.disable(gl.BLEND);
-        gl.enable(gl.DEPTH_TEST);
+        gl.enable(gl.DEPTH_TEST);   //ground가 이 아래로 오면 그리는 순서 떄문에 피라미드가 안보인다
     }
 
     window.requestAnimationFrame(render);

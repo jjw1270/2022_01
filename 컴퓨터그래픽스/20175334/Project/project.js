@@ -27,12 +27,10 @@ var rand_obj = [];
 var rand_x = [];
 var pyraColor = [];
 var objTex = [];
+var lifeCount = 3;
+var isHit = false;
 
-const objectPos = [
-    vec3(-3, 0, -5),    vec3(3, 0, -5),
-    vec3(-3, 0, -3),    vec3(3, 0, -3),
-    vec3(-3, 0, -1),    vec3(3, 0, -1)
-];
+var objectPos = [];   //오브젝트 중심 위치
 
 function detectCollision(newPosX, newPosZ){
     for(var index = 0; index<objectPos.length; index++){
@@ -199,32 +197,12 @@ window.onkeydown = function(event) {
                 isStart = true;
             }
             break;
-        // case 38:    // up arrow
-        // case 87:    // 'W'
-        // case 119:   // 'w'
-        //     var newPosX = eyePos[0] + 0.5 * cameraVec[0];
-        //     var newPosZ = eyePos[2] + 0.5 * cameraVec[2];
-        //     //if (newPosX > -10 && newPosX < 10 && newPosZ > -10 && newPosZ < 10 && !detectCollision(newPosX, newPosZ)) {
-        //         eyePos[0] = newPosX;
-        //         eyePos[2] = newPosZ;
-        //     //}
-        //     break;
-        // case 40:    // down arrow
-        // case 83:    // 'S'
-        // case 115:   // 's'
-        //     var newPosX = eyePos[0] - 0.5 * cameraVec[0];
-        //     var newPosZ = eyePos[2] - 0.5 * cameraVec[2];
-        //     //if (newPosX > -10 && newPosX < 10 && newPosZ > -10 && newPosZ < 10 && !detectCollision(newPosX, newPosZ)) {
-        //         eyePos[0] = newPosX;
-        //         eyePos[2] = newPosZ;
-        //     //}
-            // break;
     }
     render();
 };
 
 function setLighting(program) {
-    var lightSrc = [0.0, 1.0, 0.0, 0.0];
+    var lightSrc = [0.0, 5.0, 5.0, 0.0];
     var lightAmbient = [0.0, 0.0, 0.0, 1.0];
     var lightDiffuse = [1.0, 1.0, 1.0, 1.0];
     var lightSpecular = [1.0, 1.0, 1.0, 1.0];
@@ -241,8 +219,9 @@ function setLighting(program) {
     gl.uniform4fv(gl.getUniformLocation(program, "ambientProduct"), ambientProduct);
     gl.uniform4fv(gl.getUniformLocation(program, "diffuseProduct"), diffuseProduct);
     gl.uniform4fv(gl.getUniformLocation(program, "specularProduct"), specularProduct);
+    //gl.uniform3f(gl.getUniformLocation(program, "kAtten"), 0.2, 0.2, 0.2);
 
-    gl.uniform1f(gl.getUniformLocation(program, "shininess"), 100.0);
+    gl.uniform1f(gl.getUniformLocation(program, "shininess"), 10000.0);
     gl.uniform3fv(gl.getUniformLocation(program, "eyePos"), flatten(eyePos));
 };
 
@@ -295,6 +274,13 @@ function setTexture(){
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 }
+function syncDelay(milliseconds){
+    var start = new Date().getTime();
+    var end = 0;
+    while( (end-start) < milliseconds){
+        end = new Date().getTime();
+    }
+}
 
 function render() {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -310,25 +296,34 @@ function render() {
     gl.useProgram(program2);
     gl.uniformMatrix4fv(viewMatrixLoc2, false, flatten(viewMatrix));
 
-    let currTime = new Date();
-    let elapsedTime = currTime.getTime() - prevTime.getTime();
-    theta += (elapsedTime / 10);
-    prevTime = currTime;
+    // let currTime = new Date();
+    // let elapsedTime = currTime.getTime() - prevTime.getTime();
+    //prevTime = currTime;
 
-    if(isStart){
-        eyePos[2] = eyePos[2] - elapsedTime/100;    //앞으로 이동
-        var rMatrix = mult(rotateX(5*theta), rotateZ(180));
+    if(isStart && lifeCount>0){
+        theta += 0.25;
+        console.log(theta);
+        eyePos[2] = -theta;    //앞으로 이동
+        var rMatrix = mult(rotateX(theta*5), rotateZ(180));
+        // if(detectCollision(eyePos[0], eyePos[2])){
+        //     syncDelay(10);
+        //     lifeCount--;
+        //     console.log(lifeCount);
+        //     ///
+        // }
     }
     else{
+        eyePos[2] = eyePos[2];
         var rMatrix = rotateZ(180);
     }
     
     var uColorLoc = gl.getUniformLocation(program0, "uColor");
     var diffuseProductLoc = gl.getUniformLocation(program1, "diffuseProduct");
     var textureLoc = gl.getUniformLocation(program2, "texture");
-    
+    //console.log(isStart);
+
     // draw the ground infin
-    if(parseInt(theta)/100 % 3 == 0 && isStart){
+    if(theta % 50 == 0 && isStart){///
         if(!isGroundCreate){
             isGroundCreate = true;
             console.log("adfadf");
@@ -339,40 +334,14 @@ function render() {
 
     gl.useProgram(program2);
     gl.uniform1i(textureLoc, 0);
-    // gl.uniformMatrix4fv(modelMatrixLoc2, false, flatten(trballMatrix));
-    // gl.drawArrays(gl.TRIANGLES, vertGroundStart, numVertGroundTri);
     modelMatrix = translate(0, -1, groundPosZ);
     gl.uniformMatrix4fv(modelMatrixLoc2, false, flatten(modelMatrix));
     gl.drawArrays(gl.TRIANGLES, vertGroundStart, numVertGroundTri);
     
-    // // draw a cube
-    // gl.useProgram(program2);
-    // gl.uniform1i(textureLoc, 1);
-    // //gl.uniform4f(uColorLoc, 1.0, 0.0, 0.0, 1.0);    // red
-    // //gl.uniform4f(diffuseProductLoc, 1.0, 0.0, 0.0,  1.0);
-
-    // var rMatrix = mult(rotateY(theta), rotateZ(45));
-    // modelMatrix = mult(translate(-2.5, 0, 45), rMatrix);
-    // modelMatrix = mult(trballMatrix, modelMatrix);
-    // gl.uniformMatrix4fv(modelMatrixLoc2, false, flatten(modelMatrix));
-    // gl.drawArrays(gl.TRIANGLES, vertCubeStart, numVertCubeTri);
-
-    // var rMatrix = mult(rotateY(theta), rotateZ(45));
-    // modelMatrix = mult(translate(0, 0, 40), rMatrix);
-    // modelMatrix = mult(trballMatrix, modelMatrix);
-    // gl.uniformMatrix4fv(modelMatrixLoc2, false, flatten(modelMatrix));
-    // gl.drawArrays(gl.TRIANGLES, vertCubeStart, numVertCubeTri);
-
-    // var rMatrix = mult(rotateY(theta), rotateZ(45));
-    // modelMatrix = mult(translate(2.5, 0, 45), rMatrix);
-    // modelMatrix = mult(trballMatrix, modelMatrix);
-    // gl.uniformMatrix4fv(modelMatrixLoc2, false, flatten(modelMatrix));
-    // gl.drawArrays(gl.TRIANGLES, vertCubeStart, numVertCubeTri);
-    
     if(isStart){
-        if(parseInt(theta)/100 % 6 == 0){
+        if(theta % 60 == 0){
             //obstacle pos
-            for(var i=0; i<5; i++){
+            for(var i=0; i<7; i++){
                 rand_x[i] = Math.floor(Math.random() * 3 + 1);  //1~3
                 switch(rand_x[i]){
                     case 1:
@@ -385,22 +354,21 @@ function render() {
                         rand_x[i] = 2.5;
                         break;
                 }
-                    objPosZ[i] = eyePos[2]-20-i*10;
+                    objPosZ[i] = eyePos[2]-14-i*7;
                     rand_obj[i] = Math.floor(Math.random() * 2 + 1);  //1~2
                     pyraColor = [Math.random(), Math.random(), Math.random()];
                     objTex[i] = Math.floor(Math.random() * 3 + 1);
+                    objectPos[i] = vec3(rand_x[i], 0, objPosZ[i]);
             }
             
             
         }
         //draw obstacle
-        for(var i = 0; i<5; i++){
+        for(var i = 0; i<rand_x.length; i++){
             if(rand_obj[i] == 1){
                 // draw a cube
                 gl.useProgram(program2);
                 gl.uniform1i(textureLoc, objTex[i]);
-                //gl.uniform4f(uColorLoc, 1.0, 0.0, 0.0, 1.0);    // red
-                //gl.uniform4f(diffuseProductLoc, 1.0, 0.0, 0.0,  1.0);
 
                 var rMatrix2 = mult(rotateY(theta), rotateZ(45));
                 modelMatrix = mult(translate(rand_x[i], 0, objPosZ[i]), rMatrix2);
@@ -409,15 +377,15 @@ function render() {
             }
             else if(rand_obj[i] == 2){
                 // draw a hexa-pyramid
-                gl.useProgram(program0);
+                gl.useProgram(program1);
                 //gl.useProgram(program1);
-                gl.uniform4f(uColorLoc, pyraColor[0], pyraColor[1], pyraColor[2], 1.0);    //translucent blue
-                //gl.uniform4f(diffuseProductLoc, 0.0, 0.0, 1.0, 1.0);
+                //gl.uniform4f(uColorLoc, pyraColor[0], pyraColor[1], pyraColor[2], 1.0);    //translucent blue
+                gl.uniform4f(diffuseProductLoc, 0.0, 0.0, 1.0, 1.0);
                 
-                modelMatrix = mult(translate(rand_x[i], 0, objPosZ[i]), rotateZ(180));
-                gl.uniformMatrix4fv(modelMatrixLoc0, false, flatten(modelMatrix));
+                var rMatrix3 = mult(rotateY(theta), rotateZ(180));
+                modelMatrix = mult(translate(rand_x[i], 0, objPosZ[i]), rMatrix3);
+                gl.uniformMatrix4fv(modelMatrixLoc1, false, flatten(modelMatrix));
                 gl.drawArrays(gl.TRIANGLES, vertPyraStart, numVertPyraTri);
-
             }
         }
         
@@ -475,19 +443,20 @@ function render() {
     // draw a life_count
     gl.useProgram(program0);
     //gl.useProgram(program1);
-    gl.uniform4f(uColorLoc, 0.0, 0.0, 1.0, 0.5);    //translucent blue
+    gl.uniform4f(uColorLoc, 0.5, 0.2, 0.2, 0.5);    //translucent blue
     //gl.uniform4f(diffuseProductLoc, 0.0, 0.0, 1.0, 1.0);
 
     gl.disable(gl.DEPTH_TEST);
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-    
-    modelMatrix = mult(translate(rand_x[i], 0, objPosZ[i]), rotateZ(180));
-    gl.uniformMatrix4fv(modelMatrixLoc0, false, flatten(modelMatrix));
-    gl.drawArrays(gl.TRIANGLES, vertPyraStart, numVertPyraTri);
-
+    for(var x = -3; x <= lifeCount; x+=3){
+        modelMatrix = mult(translate(eyePos[0]+x, 4, eyePos[2]-8), rotateZ(180));
+        gl.uniformMatrix4fv(modelMatrixLoc0, false, flatten(modelMatrix));
+        gl.drawArrays(gl.TRIANGLES, vertCubeStart, numVertCubeTri);
+    }
     gl.disable(gl.BLEND);
     gl.enable(gl.DEPTH_TEST);
+    
 
     window.requestAnimationFrame(render);
 }

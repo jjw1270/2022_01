@@ -31,7 +31,7 @@
             vec3 N = normalize(fNormal);
             vec3 V = normalize(eyePos - fWorldPos);
 
-            if(lightingMode == 0) {                        //directional light
+            if(lightingMode == 0) {
                 vec3 L = normalize(lightSrc.xyz);
                 float kd = max(dot(L, N), 0.0);
                 vec4 diffuse = kd * diffuseProduct;

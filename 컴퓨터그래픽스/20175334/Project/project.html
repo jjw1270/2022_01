@@ -43,11 +43,11 @@
         precision mediump float;
         varying vec3 fNormal, fWorldPos;
 
-        uniform vec3 eyePos;
+        uniform vec3 eyePos, kAtten;
         uniform vec4 lightSrc, ambientProduct, diffuseProduct, specularProduct;
         uniform float shininess;
         
-        void main() { //Directional 광원
+        void main() {
             vec3 N = normalize(fNormal);
             vec3 L = normalize(lightSrc.xyz);
             float kd = max(dot(L, N), 0.0);
@@ -60,6 +60,24 @@
 
             gl_FragColor = ambientProduct + diffuse + specular;
             gl_FragColor.a = 1.0;
+            
+            /*vec3 N = normalize(fNormal);
+            vec3 V = normalize(eyePos - fWorldPos);
+
+            vec3 lightVec = lightSrc.xyz - fWorldPos;
+            vec3 L = normalize(lightVec);
+            float kd = max(dot(L, N), 0.0);
+            vec4 diffuse = kd * diffuseProduct;
+
+            vec3 H = normalize(L + V);
+            float ks = pow(max(dot(N, H), 0.0), shininess);
+            vec4 specular = ks * specularProduct;
+
+            float d = length(lightVec);
+            float atten = 1.0 / (kAtten[0] + kAtten[1]*d + kAtten[2]*d*d);
+            gl_FragColor = ambientProduct + atten * (diffuse + specular);
+           
+            gl_FragColor.a = 1.0; */
         }
         </script>
 
