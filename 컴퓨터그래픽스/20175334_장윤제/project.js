@@ -6,8 +6,7 @@ var texCoords = [];
 var program0, program1, program2;        // 0:color, 1:phong, 2:texture mapping
 var modelMatrixLoc0, viewMatrixLoc0, modelMatrixLoc1, viewMatrixLoc1, modelMatrixLoc2, viewMatrixLoc2;
 
-var vertCubeStart, numVertCubeTri, vertPyraStart, numVertPyraTri, vertGroundStart, numVertGroundTri;
-var vertBodyStart, numVertBodyTri;
+var vertCubeStart, numVertCubeTri, vertGroundStart, numVertGroundTri;
 
 var eyePos = vec3(0.0, 0.0, 0.0);
 var atPos = vec3(0.0, 0.0, 0.0);
@@ -38,8 +37,7 @@ var hitPointColor = [vec4(0.0, 0.3, 1.0, 0.2), vec4(0.0, 0.3, 1.0, 0.2), vec4(0.
 var comboScale = [0.35, 0.35, 0.35];
 var comboColor;
 var comboCount = 0;
-
-var score ;
+var score = 0;
 
 var objectPos = [];   //오브젝트 중심 위치
 
@@ -62,7 +60,7 @@ window.onload = function init()
     }
 
     generateTexGround();
-    generateTexCube();
+    generateCube();
 
     // Configure WebGL
     gl.viewport(0, 0, canvas.width, canvas.height);
@@ -177,6 +175,7 @@ window.onload = function init()
 
     music.addEventListener("ended", function(){
         isStart = false;
+        backGroundColor = [0.0, 0.0, 0.0];
         alert("Your Score : " + score);
     })
 
@@ -279,7 +278,7 @@ function setTexture(){
 function render() {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    atPos[0] = eyePos[0] + cameraVec[0];    //경과시간 만큼만 이동하도록 시간을 곱해야함
+    atPos[0] = eyePos[0] + cameraVec[0];
     atPos[1] = eyePos[1] + cameraVec[1];
     atPos[2] = eyePos[2] + cameraVec[2];
     var viewMatrix = lookAt(eyePos, atPos, upVec);
@@ -741,18 +740,18 @@ function makeNode(xpos){
     nodeNum++;
 }
 
-function generateTexCube() {
+function generateCube() {
     vertCubeStart = points.length;
     numVertCubeTri = 0;
-    texQuad(1, 0, 3, 2);
-    texQuad(2, 3, 7, 6);
-    texQuad(3, 0, 4, 7);
-    texQuad(4, 5, 6, 7);
-    texQuad(5, 4, 0, 1);
-    texQuad(6, 5, 1, 2);
+    Quad(1, 0, 3, 2);
+    Quad(2, 3, 7, 6);
+    Quad(3, 0, 4, 7);
+    Quad(4, 5, 6, 7);
+    Quad(5, 4, 0, 1);
+    Quad(6, 5, 1, 2);
 }
 
-function texQuad(a, b, c, d) {
+function Quad(a, b, c, d) {
     vertexPos = [
         vec4(-0.5, -0.5, -0.5, 1.0),
         vec4( 0.5, -0.5, -0.5, 1.0),
@@ -775,43 +774,30 @@ function texQuad(a, b, c, d) {
         vec4(-0.57735,  0.57735,  0.57735, 0.0)
     ];
 
-    var texCoord = [
-        vec2(0,0),
-        vec2(0,1),
-        vec2(1,1),
-        vec2(1,0)
-    ];
-
     // two triangles: (a, b, c) and (a, c, d)
     //solid colored faces
     points.push(vertexPos[a]);
     normals.push(vertexNormals[a]);
-    texCoords.push(texCoord[0]);
     numVertCubeTri++;
 
     points.push(vertexPos[b]);
     normals.push(vertexNormals[b]);
-    texCoords.push(texCoord[1]);
     numVertCubeTri++;
 
     points.push(vertexPos[c]);
     normals.push(vertexNormals[c]);
-    texCoords.push(texCoord[2]);
     numVertCubeTri++;
 
     points.push(vertexPos[a]);
     normals.push(vertexNormals[a]);
-    texCoords.push(texCoord[0]);
     numVertCubeTri++;
 
     points.push(vertexPos[c]);
     normals.push(vertexNormals[c]);
-    texCoords.push(texCoord[2]);
     numVertCubeTri++;
 
     points.push(vertexPos[d]);
     normals.push(vertexNormals[d]);
-    texCoords.push(texCoord[3]);
     numVertCubeTri++;
 }
 

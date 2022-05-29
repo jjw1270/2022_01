@@ -8,7 +8,6 @@
 
             uniform mat4 modelMatrix, viewMatrix, projectionMatrix;
             
-            
             void main() {
                 gl_Position = projectionMatrix * viewMatrix * modelMatrix * vPosition;
             }
@@ -44,7 +43,7 @@
         precision mediump float;
         varying vec3 fNormal, fWorldPos;
 
-        uniform vec3 eyePos, kAtten;
+        uniform vec3 eyePos;
         uniform vec4 lightSrc, ambientProduct, diffuseProduct, specularProduct;
         uniform float shininess;
         
@@ -125,9 +124,9 @@
             </canvas>
         </div>
         <div style="width:700px; text-align:center;">
-            <button id="left" style="width:150px; height:30px">←</button>
-            <button id="center" style="width:150px; height:30px">↓</button>
-            <button id="right" style="width:150px; height:30px">→</button>
+            <button style="width:150px; height:30px">←</button>
+            <button style="width:150px; height:30px">↓</button>
+            <button style="width:150px; height:30px">→</button>
         </div>
         <div>
             <img src="images/neon.bmp" hidden>
