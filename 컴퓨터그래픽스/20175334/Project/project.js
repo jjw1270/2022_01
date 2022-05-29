@@ -10,32 +10,44 @@ var trballMatrix = mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
 var vertCubeStart, numVertCubeTri, vertPyraStart, numVertPyraTri, vertGroundStart, numVertGroundTri;
 var vertBodyStart, numVertBodyTri;
 
-var eyePos = vec3(0.0, 1.0, 50.0);
+var eyePos = vec3(0.0, 0.0, 0.0);
 var atPos = vec3(0.0, 0.0, 0.0);
 var upVec = vec3(0.0, 1.0, 0.0);
 var cameraVec = vec3(0.0, 0.0, -0.7071);
 
-var theta = 0;
-var prevTime = new Date();
+var time;
+
+var music = new Audio('music.mp3');
 
 var isStart = false;
-var isGroundCreate = false;
-var isObjCreate = false;
-var groundPosZ = 0;
-var objPosZ = [];
-var rand_obj = [];
-var rand_x = [];
-var pyraColor = [];
-var objTex = [];
-var lifeCount = 3;
-var isHit = false;
+var isGameOver = false;
+var backGroundColor = [0.0, 0.0, 0.0];
+var speed = [];
+var nodeCount = [];
+var nodeNum;
+var xPos = [];
+var colorR = [];
+var colorG = [];
+var colorB = [];
+
+var isCollision1 = false;
+var isCollision2 = false;
+var isCollision3 = false;
+
+var hitPointColor = [vec4(0.0, 0.3, 1.0, 0.2), vec4(0.0, 0.3, 1.0, 0.2), vec4(0.0, 0.3, 1.0, 0.2)];
+
+var comboScale = [0.35, 0.35, 0.35];
+var comboColor;
+var comboCount = 0;
+
+var score = 0;
 
 var objectPos = [];   //오브젝트 중심 위치
 
-function detectCollision(newPosX, newPosZ){
+function detectCollision(newPosX, newPosY){
     for(var index = 0; index<objectPos.length; index++){
-        if(Math.abs(newPosX-objectPos[index][0]) < 1.0 && Math.abs(newPosZ-objectPos[index][2]) < 1.0)
-            return true;
+        if(Math.abs(newPosX-objectPos[index][0]) < 0.65 && Math.abs(newPosY-objectPos[index][1]) < 0.1)
+            return [true, index];
     }
     return false;
 };
@@ -47,6 +59,7 @@ window.onload = function init()
     gl = WebGLUtils.setupWebGL(canvas);
     if( !gl ) {
         alert("WebGL isn't available!");
+        window.location.reload();
     }
 
     generateTexGround();
@@ -84,25 +97,14 @@ window.onload = function init()
     //var viewMatrix = lookAt(eyePos, atPos, upVec);
     viewMatrixLoc0 = gl.getUniformLocation(program0, "viewMatrix");
     //gl.uniformMatrix4fv(viewMatrixLoc, false, flatten(viewMatrix));
-    /*
-    // 3D orthographic viewing
-    var viewLength = 2.0;
-    var projectionMatrix;
-    if (canvas.width > canvas.height) {
-        var aspect = viewLength * canvas.width / canvas.height;
-        projectionMatrix = ortho(-aspect, aspect, -viewLength, viewLength, -viewLength, 1000);
-    }
-    else {
-        var aspect = viewLength * canvas.height / canvas.width;
-        projectionMatrix = ortho(-viewLength, viewLength, -aspect, aspect, -viewLength, 1000);
-    }
-    */
+    
     // 3D perspective viewing
     var aspect = canvas.width / canvas.height;
     var projectionMatrix = perspective(90, aspect, 0.1, 1000); 
 
     var projectionMatrixLoc = gl.getUniformLocation(program0, "projectionMatrix");
     gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
+    
 
     /////////////////////////////////////////////////
     //program1 : phong shading
@@ -169,40 +171,77 @@ window.onload = function init()
     // Event listeners for buttons
     document.getElementById("start").onclick = function () {
         if(!isStart){
+            time = 0;
+            nodeNum = 0;
             isStart = true;
+            music.loop = false;
+            music.play();
         }
     };
+
+    music.addEventListener("ended", function(){
+        isStart = false;
+        alert("Your Score : " + score);
+    })
 
     render();
 };
 
 window.onkeydown = function(event) {
-    var sinTheta = Math.sin(0.1);
-    var cosTheta = Math.cos(0.1);
     switch (event.keyCode) {
         case 37:    // left arrow
-        case 65:    // 'A'
-        case 97:    // 'a'
-            if(eyePos[0] > -3)
-                eyePos[0] -= 1;
+            hitPointColor[0] = vec4(0.6, 0.6, 1.0, 0.3);
+            if(detectCollision(-0.86, -1.5)[0]){
+                //console.log("hit-1");
+                xPos[detectCollision(-0.86, -1.55)[1]] = 99;
+                comboCount++;
+                score += 100;
+                comboScale = [0.5, 0.5, 0.5];
+                setTimeout(function () {
+                    comboScale = [0.35, 0.35, 0.35];
+                }, 100);
+            }
+            setTimeout(function () {
+                hitPointColor[0] = vec4(0.0, 0.3, 1.0, 0.2);
+            }, 50);
+            break;
+        case 40:    // down arrow
+            hitPointColor[1] = vec4(0.6, 0.6, 1.0, 0.3);
+            if(detectCollision(0, -1.5)[0]){
+                //console.log("hit0");
+                xPos[detectCollision(0, -1.55)[1]] = 99;
+                comboCount++;
+                score += 100;
+                comboScale = [0.5, 0.5, 0.5];
+                setTimeout(function () {
+                    comboScale = [0.35, 0.35, 0.35];
+                }, 100);
+            }
+            setTimeout(function () {
+                hitPointColor[1] = vec4(0.0, 0.3, 1.0, 0.2);
+            }, 50);
             break;
         case 39:    // right arrow
-        case 68:    // 'D'
-        case 100:   // 'd'
-            if(eyePos[0] < 3)
-                eyePos[0] += 1;
-            break;
-        case 32:  //space
-            if(!isStart){
-                isStart = true;
+            hitPointColor[2] = vec4(0.6, 0.6, 1.0, 0.3);
+            if(detectCollision(0.86, -1.55)[0]){
+                //console.log("hit1");
+                xPos[detectCollision(0.86, -1.5)[1]] = 99;
+                comboCount++;
+                score += 100;
+                comboScale = [0.5, 0.5, 0.5];
+                setTimeout(function () {
+                    comboScale = [0.35, 0.35, 0.35];
+                }, 100);
             }
+            setTimeout(function () {
+                hitPointColor[2] = vec4(0.0, 0.3, 1.0, 0.2);
+            }, 50);
             break;
     }
-    render();
 };
 
 function setLighting(program) {
-    var lightSrc = [0.0, 5.0, 5.0, 0.0];
+    var lightSrc = [0.0, -2.0, 4.0, 0.0];
     var lightAmbient = [0.0, 0.0, 0.0, 1.0];
     var lightDiffuse = [1.0, 1.0, 1.0, 1.0];
     var lightSpecular = [1.0, 1.0, 1.0, 1.0];
@@ -219,15 +258,14 @@ function setLighting(program) {
     gl.uniform4fv(gl.getUniformLocation(program, "ambientProduct"), ambientProduct);
     gl.uniform4fv(gl.getUniformLocation(program, "diffuseProduct"), diffuseProduct);
     gl.uniform4fv(gl.getUniformLocation(program, "specularProduct"), specularProduct);
-    //gl.uniform3f(gl.getUniformLocation(program, "kAtten"), 0.2, 0.2, 0.2);
 
-    gl.uniform1f(gl.getUniformLocation(program, "shininess"), 10000.0);
+    gl.uniform1f(gl.getUniformLocation(program, "shininess"), 30.0);
     gl.uniform3fv(gl.getUniformLocation(program, "eyePos"), flatten(eyePos));
 };
 
 function setTexture(){
     var image0 = new Image();
-    image0.src = "../images/brick2.bmp"
+    image0.src = "../images/neon.bmp"
 
     var texture0 = gl.createTexture();
     gl.activeTexture(gl.TEXTURE0);
@@ -237,49 +275,6 @@ function setTexture(){
     gl.generateMipmap(gl.TEXTURE_2D);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-
-    var image1 = new Image();
-    image1.src = "../images/crate.bmp"
-
-    var texture1 = gl.createTexture();
-    gl.activeTexture(gl.TEXTURE1);
-    gl.bindTexture(gl.TEXTURE_2D, texture1);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image1);
-
-    gl.generateMipmap(gl.TEXTURE_2D);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-
-    var image2 = new Image();
-    image2.src = "../images/pocket.bmp"
-
-    var texture2 = gl.createTexture();
-    gl.activeTexture(gl.TEXTURE2);
-    gl.bindTexture(gl.TEXTURE_2D, texture2);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image2);
-
-    gl.generateMipmap(gl.TEXTURE_2D);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-
-    var image3 = new Image();
-    image3.src = "../images/logo.bmp"
-
-    var texture3 = gl.createTexture();
-    gl.activeTexture(gl.TEXTURE3);
-    gl.bindTexture(gl.TEXTURE_2D, texture3);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image3);
-
-    gl.generateMipmap(gl.TEXTURE_2D);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-}
-function syncDelay(milliseconds){
-    var start = new Date().getTime();
-    var end = 0;
-    while( (end-start) < milliseconds){
-        end = new Date().getTime();
-    }
 }
 
 function render() {
@@ -295,170 +290,397 @@ function render() {
     gl.uniformMatrix4fv(viewMatrixLoc1, false, flatten(viewMatrix));
     gl.useProgram(program2);
     gl.uniformMatrix4fv(viewMatrixLoc2, false, flatten(viewMatrix));
-
-    // let currTime = new Date();
-    // let elapsedTime = currTime.getTime() - prevTime.getTime();
-    //prevTime = currTime;
-
-    if(isStart && lifeCount>0){
-        theta += 0.25;
-        console.log(theta);
-        eyePos[2] = -theta;    //앞으로 이동
-        var rMatrix = mult(rotateX(theta*5), rotateZ(180));
-        // if(detectCollision(eyePos[0], eyePos[2])){
-        //     syncDelay(10);
-        //     lifeCount--;
-        //     console.log(lifeCount);
-        //     ///
-        // }
-    }
-    else{
-        eyePos[2] = eyePos[2];
-        var rMatrix = rotateZ(180);
-    }
     
     var uColorLoc = gl.getUniformLocation(program0, "uColor");
     var diffuseProductLoc = gl.getUniformLocation(program1, "diffuseProduct");
     var textureLoc = gl.getUniformLocation(program2, "texture");
-    //console.log(isStart);
 
-    // draw the ground infin
-    if(theta % 50 == 0 && isStart){///
-        if(!isGroundCreate){
-            isGroundCreate = true;
-            console.log("adfadf");
-            groundPosZ = eyePos[2]-25;
-        }
-    }
-    else isGroundCreate = false;
-
+    //draw a backGround
     gl.useProgram(program2);
     gl.uniform1i(textureLoc, 0);
-    modelMatrix = translate(0, -1, groundPosZ);
+    modelMatrix = translate(-0.5, -1.5, 0);
+    modelMatrix = mult(rotateX(-90), modelMatrix);
     gl.uniformMatrix4fv(modelMatrixLoc2, false, flatten(modelMatrix));
     gl.drawArrays(gl.TRIANGLES, vertGroundStart, numVertGroundTri);
-    
-    if(isStart){
-        if(theta % 60 == 0){
-            //obstacle pos
-            for(var i=0; i<7; i++){
-                rand_x[i] = Math.floor(Math.random() * 3 + 1);  //1~3
-                switch(rand_x[i]){
-                    case 1:
-                        rand_x[i] = -2.5;
-                        break;
-                    case 2:
-                        rand_x[i] = 0;
-                        break;
-                    case 3:
-                        rand_x[i] = 2.5;
-                        break;
-                }
-                    objPosZ[i] = eyePos[2]-14-i*7;
-                    rand_obj[i] = Math.floor(Math.random() * 2 + 1);  //1~2
-                    pyraColor = [Math.random(), Math.random(), Math.random()];
-                    objTex[i] = Math.floor(Math.random() * 3 + 1);
-                    objectPos[i] = vec3(rand_x[i], 0, objPosZ[i]);
-            }
-            
-            
-        }
-        //draw obstacle
-        for(var i = 0; i<rand_x.length; i++){
-            if(rand_obj[i] == 1){
-                // draw a cube
-                gl.useProgram(program2);
-                gl.uniform1i(textureLoc, objTex[i]);
 
-                var rMatrix2 = mult(rotateY(theta), rotateZ(45));
-                modelMatrix = mult(translate(rand_x[i], 0, objPosZ[i]), rMatrix2);
-                gl.uniformMatrix4fv(modelMatrixLoc2, false, flatten(modelMatrix));
-                gl.drawArrays(gl.TRIANGLES, vertCubeStart, numVertCubeTri);
-            }
-            else if(rand_obj[i] == 2){
-                // draw a hexa-pyramid
-                gl.useProgram(program1);
-                //gl.useProgram(program1);
-                //gl.uniform4f(uColorLoc, pyraColor[0], pyraColor[1], pyraColor[2], 1.0);    //translucent blue
-                gl.uniform4f(diffuseProductLoc, 0.0, 0.0, 1.0, 1.0);
-                
-                var rMatrix3 = mult(rotateY(theta), rotateZ(180));
-                modelMatrix = mult(translate(rand_x[i], 0, objPosZ[i]), rMatrix3);
-                gl.uniformMatrix4fv(modelMatrixLoc1, false, flatten(modelMatrix));
-                gl.drawArrays(gl.TRIANGLES, vertPyraStart, numVertPyraTri);
-            }
-        }
-        
-    } 
-
-    //Player
-    // draw a ears
     gl.useProgram(program1);
-    //gl.useProgram(program1);
-    //gl.uniform4f(uColorLoc, 0.0, 0.0, 1.0, 0.5);    //translucent blue
-    gl.uniform4f(diffuseProductLoc, 0.7, 1.0, 1.0, 1.0);
+    gl.uniform4f(diffuseProductLoc, backGroundColor[0], backGroundColor[1], backGroundColor[2], 1.0);
     
-    modelMatrix = rotateZ(150);
-    modelMatrix = mult(scalem(0.2,0.2,0.2), modelMatrix);
-    modelMatrix = mult(translate(eyePos[0]-0.4, eyePos[1]-0.7, eyePos[2]-1.7), modelMatrix);
+    modelMatrix = mult(scalem(10,10,1), rotateX(-90));
+    modelMatrix = mult(translate(-5, 0, -7), modelMatrix);
     gl.uniformMatrix4fv(modelMatrixLoc1, false, flatten(modelMatrix));
-    gl.drawArrays(gl.TRIANGLES, vertPyraStart, numVertPyraTri);
+    gl.drawArrays(gl.TRIANGLES, vertGroundStart, numVertGroundTri);
 
-    modelMatrix = rotateZ(-150);
-    modelMatrix = mult(scalem(0.2,0.2,0.2), modelMatrix);
-    modelMatrix = mult(translate(eyePos[0]+0.4, eyePos[1]-0.7, eyePos[2]-1.7), modelMatrix);
-    gl.uniformMatrix4fv(modelMatrixLoc1, false, flatten(modelMatrix));
-    gl.drawArrays(gl.TRIANGLES, vertPyraStart, numVertPyraTri);
-
-    // draw a leg
-    gl.useProgram(program1);
-    //gl.useProgram(program1);
-    //gl.uniform4f(uColorLoc, 0.0, 0.0, 1.0, 0.5);    //translucent blue
-    gl.uniform4f(diffuseProductLoc, 1.0, 1.0, 0.0, 1.0);
-    
-    modelMatrix = rMatrix;
-    modelMatrix = mult(scalem(0.4,0.6,1.0), modelMatrix);
-    modelMatrix = mult(translate(eyePos[0]-0.4, eyePos[1]-1.8, eyePos[2]-2.5), modelMatrix);
-    gl.uniformMatrix4fv(modelMatrixLoc1, false, flatten(modelMatrix));
-    gl.drawArrays(gl.TRIANGLES, vertCubeStart, numVertCubeTri);
-
-    modelMatrix = rMatrix;
-    modelMatrix = mult(scalem(0.4,0.6,1.0), modelMatrix);
-    modelMatrix = mult(translate(eyePos[0]+0.4, eyePos[1]-1.8, eyePos[2]-2.5), modelMatrix);
-    gl.uniformMatrix4fv(modelMatrixLoc1, false, flatten(modelMatrix));
-    gl.drawArrays(gl.TRIANGLES, vertCubeStart, numVertCubeTri);
-
-    // draw a body
-    gl.useProgram(program1);
-    //gl.useProgram(program1);
-    //gl.uniform4f(uColorLoc, 0.0, 0.0, 1.0, 0.5);    //translucent blue
-    gl.uniform4f(diffuseProductLoc, 1.0, 0.6, 0.6, 1.0);
-
-    modelMatrix = rotateX(180);
-    modelMatrix = mult(scalem(0.8,0.4,0.8), modelMatrix);
-    modelMatrix = mult(translate(eyePos[0], eyePos[1]-1, eyePos[2]-2), modelMatrix);
-    gl.uniformMatrix4fv(modelMatrixLoc1, false, flatten(modelMatrix));
-    gl.drawArrays(gl.TRIANGLES, vertPyraStart, numVertPyraTri);
-
-    // draw a life_count
+    //draw three hitPoints
     gl.useProgram(program0);
-    //gl.useProgram(program1);
-    gl.uniform4f(uColorLoc, 0.5, 0.2, 0.2, 0.5);    //translucent blue
-    //gl.uniform4f(diffuseProductLoc, 0.0, 0.0, 1.0, 1.0);
 
     gl.disable(gl.DEPTH_TEST);
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-    for(var x = -3; x <= lifeCount; x+=3){
-        modelMatrix = mult(translate(eyePos[0]+x, 4, eyePos[2]-8), rotateZ(180));
-        gl.uniformMatrix4fv(modelMatrixLoc0, false, flatten(modelMatrix));
-        gl.drawArrays(gl.TRIANGLES, vertCubeStart, numVertCubeTri);
-    }
+
+    gl.uniform4fv(uColorLoc, hitPointColor[0]); 
+    modelMatrix = mult(rotateY(-3), rotateX(20));
+    modelMatrix = mult(scalem(1.75, 0.3, 0.2), modelMatrix);
+    modelMatrix = mult(translate(-2, -3.5, -5), modelMatrix);
+    gl.uniformMatrix4fv(modelMatrixLoc0, false, flatten(modelMatrix));
+    gl.drawArrays(gl.TRIANGLES, vertCubeStart, numVertCubeTri);
+
+    gl.uniform4fv(uColorLoc, hitPointColor[1]); 
+    modelMatrix = mult(rotateY(0), rotateX(20));
+    modelMatrix = mult(scalem(1.75, 0.3, 0.2), modelMatrix);
+    modelMatrix = mult(translate(0, -3.5, -5), modelMatrix);
+    gl.uniformMatrix4fv(modelMatrixLoc0, false, flatten(modelMatrix));
+    gl.drawArrays(gl.TRIANGLES, vertCubeStart, numVertCubeTri);
+
+    gl.uniform4fv(uColorLoc, hitPointColor[2]); 
+    modelMatrix = mult(rotateY(3), rotateX(20));
+    modelMatrix = mult(scalem(1.75, 0.3, 0.2), modelMatrix);
+    modelMatrix = mult(translate(2, -3.5, -5), modelMatrix);
+    gl.uniformMatrix4fv(modelMatrixLoc0, false, flatten(modelMatrix));
+    gl.drawArrays(gl.TRIANGLES, vertCubeStart, numVertCubeTri);
+
     gl.disable(gl.BLEND);
     gl.enable(gl.DEPTH_TEST);
-    
+
+    //GameStart
+    if(isStart){
+        time += 1;
+        //console.log(time);
+        
+
+        //backGround Color
+        if(time % 100 == 1){
+            backGroundColor = [Math.random(), Math.random(), Math.random()];
+        }
+
+        switch(time){   //노가다~
+            case 100:
+                makeNode(-0.86);
+                break;
+            case 200:
+                makeNode(0.86);
+                break;
+            case 300:
+                makeNode(0.86);
+                makeNode(0);
+                break;
+            case 350:
+                makeNode(-0.86);
+                break;
+            case 400:
+                makeNode(0);
+                break;
+            case 450:
+                makeNode(-0.86);
+                makeNode(0);
+                makeNode(0.86);
+                break;
+            case 500:
+                makeNode(-0.86);
+                break;
+            case 550:
+                makeNode(0.86);
+                makeNode(0);
+                break;
+            case 600:
+                makeNode(0.86);
+                break;
+            case 650:
+                makeNode(0);
+                break;
+            case 700:
+                makeNode(-0.86);
+                break;
+            case 750:
+                makeNode(0.86);
+                makeNode(0);
+                break;
+            case 800:
+                makeNode(0.86);
+                makeNode(0);
+                break;
+            case 850:
+                makeNode(-0.86);
+                makeNode(0.86);
+                makeNode(0);
+                break;
+            case 950:
+                makeNode(0);
+                break;
+            case 1100:
+                makeNode(-0.86);
+                break;
+            case 1300:
+                makeNode(0.86);
+                makeNode(0);
+                break;
+            case 1350:
+                makeNode(-0.86);
+                break;
+            case 1400:
+                makeNode(0);
+                break;
+            case 1450:
+                makeNode(-0.86);
+                makeNode(0);
+                makeNode(0.86);
+                break;
+            case 1500:
+                makeNode(-0.86);
+                makeNode(0);
+                break;
+            case 1550:
+                makeNode(-0.86);
+                makeNode(0.86);
+                break;
+            case 1600:
+                makeNode(-0.86);
+                makeNode(0.86);
+                break;
+            case 1650:
+                makeNode(0);
+                makeNode(-0.86);
+                break;
+            case 1700:
+                makeNode(-0.86);
+                break;
+            case 1750:
+                makeNode(0.86);
+                makeNode(0);
+                break;
+            case 1800:
+                makeNode(-0.86);
+                makeNode(0.86);
+                break;
+            case 1900:
+                makeNode(0);
+                break;
+            case 2000:
+                makeNode(0);
+                makeNode(0.86);
+                break;
+            case 2000:
+                makeNode(-0.86);
+                break;
+            case 2200:
+                makeNode(0.86);
+                break;
+            case 2300:
+                makeNode(0.86);
+                makeNode(0);
+                break;
+            case 2350:
+                makeNode(-0.86);
+                break;
+            case 2400:
+                makeNode(0);
+                break;
+            case 2450:
+                makeNode(-0.86);
+                makeNode(0);
+                makeNode(0.86);
+                break;
+            case 2500:
+                makeNode(-0.86);
+                break;
+            case 2550:
+                makeNode(0.86);
+                makeNode(0);
+                break;
+            case 2600:
+                makeNode(0.86);
+                break;
+            case 2650:
+                makeNode(0);
+                break;
+            case 2700:
+                makeNode(-0.86);
+                break;
+            case 2750:
+                makeNode(0.86);
+                makeNode(0);
+                break;
+            case 2800:
+                makeNode(0.86);
+                makeNode(0);
+                break;
+            case 2900:
+                makeNode(-0.86);
+                makeNode(0.86);
+                makeNode(0);
+                break;
+            case 3000:
+                makeNode(-0.86);
+                makeNode(0.86);
+                makeNode(0);
+                break;
+            case 3050:
+                makeNode(0.86);
+                break;
+            case 3150:
+                makeNode(0.86);
+                break;
+            case 3300:
+                makeNode(0.86);
+                makeNode(0);
+                break;
+            case 3350:
+                makeNode(-0.86);
+                break;
+            case 3400:
+                makeNode(0);
+                break;
+            case 3450:
+                makeNode(0);
+                makeNode(0.86);
+                break;
+            case 3500:
+                makeNode(-0.86);
+                break;
+            case 3550:
+                makeNode(0.86);
+                makeNode(0);
+                break;
+            case 3600:
+                makeNode(0.86);
+                break;
+            case 3650:
+                makeNode(0);
+                break;
+            case 3700:
+                makeNode(-0.86);
+                break;
+            case 3750:
+                makeNode(0.86);
+                makeNode(0);
+                break;
+            case 3800:
+                makeNode(0.86);
+                makeNode(0);
+                break;
+            case 3900:
+                makeNode(-0.86);
+                makeNode(0);
+                break;
+        }
+
+        for(var i=0; i<speed.length; i++){
+            if(time < 1500){
+                speed[i] += 0.01;
+            }
+            else if(time < 2000){
+                speed[i] += 0.0125;
+            }
+            else if(time < 2500){
+                speed[i] += 0.015;
+            }
+            else if(time < 3000){
+                speed[i] += 0.0175;
+            }
+            else if(time < 4000){
+                speed[i] += 0.02;
+            }
+            else{
+                time = 0;
+            }
+            objectPos[i] = vec2(xPos[i], 4-speed[i]);
+        }
+
+        //draw nodes
+        gl.useProgram(program1);
+        for(var i = 0; i<nodeNum; i++){
+            gl.uniform4f(diffuseProductLoc, colorR[i], colorG[i], colorB[i], 1.0);
+            modelMatrix = mult(translate(xPos[i], 4-speed[i], -2.2), scalem(0.7, 0.1, 0.1));
+            gl.uniformMatrix4fv(modelMatrixLoc1, false, flatten(modelMatrix));
+            gl.drawArrays(gl.TRIANGLES, vertCubeStart, numVertCubeTri);
+        }
+
+        //fail
+        if(detectCollision(-0.86, -2.2)[0] && !isCollision1){
+            isCollision1 = true;
+            comboCount=0;
+            xPos[detectCollision(-0.86, -2.2)[1]] = 99;
+        }
+        if(detectCollision(0, -2.2)[0] && !isCollision2){
+            isCollision2 = true;
+            comboCount=0;
+            xPos[detectCollision(0, -2.2)[1]] = 99;
+        }
+        if(detectCollision(0.86, -2.2)[0] && !isCollision3){
+            isCollision3 = true;
+            comboCount=0;
+            xPos[detectCollision(-0.86, -2.2)[1]] = 99;
+        }
+
+        if(isCollision1){
+            setTimeout(function () {
+                isCollision1 = false;
+            }, 250);
+        }
+        if(isCollision2){
+            setTimeout(function () {
+                isCollision2 = false;
+            }, 250);
+        }
+        if(isCollision3){
+            setTimeout(function () {
+                isCollision3 = false;
+            }, 250);
+        }
+
+        switch(comboCount){
+            case 0:
+                comboColor = vec4(1.0, 0.0, 0.0, 1.0);
+                break;
+            case 5:
+                comboColor = vec4(1.0, 0.5, 0.0, 1.0);
+                break;
+            case 10:
+                comboColor = vec4(1.0, 1.0, 0.0, 1.0);
+                break;
+            case 20:
+                comboColor = vec4(0.5, 1.0, 0.0, 1.0);
+                break;
+            case 30:
+                comboColor = vec4(0.0, 1.0, 0.0, 1.0);
+                break;
+            case 40:
+                comboColor = vec4(0.0, 1.0, 0.5, 1.0);
+                break;
+            case 50:
+                comboColor = vec4(0.0, 0.0, 1.0, 1.0);
+                break;
+            case 60:
+                comboColor = vec4(0.5, 0.5, 1.0, 1.0);
+                break;
+        }
+
+        gl.useProgram(program1);
+        //draw combo
+        gl.uniform4fv(diffuseProductLoc, comboColor);
+        
+        modelMatrix = scalem(comboScale[0], comboScale[1], comboScale[2]);
+        modelMatrix = mult(translate(2.2, -2.5, -3), modelMatrix);
+        gl.uniformMatrix4fv(modelMatrixLoc1, false, flatten(modelMatrix));
+        gl.drawArrays(gl.TRIANGLES, vertCubeStart, numVertCubeTri);
+
+        modelMatrix = scalem(comboScale[0], comboScale[1], comboScale[2]);
+        modelMatrix = mult(translate(-2.2, -2.5, -3), modelMatrix);
+        gl.uniformMatrix4fv(modelMatrixLoc1, false, flatten(modelMatrix));
+        gl.drawArrays(gl.TRIANGLES, vertCubeStart, numVertCubeTri);
+    }
 
     window.requestAnimationFrame(render);
+}
+
+function makeNode(xpos){
+    xPos[nodeNum] = xpos;
+    speed[nodeNum] = 0;
+    colorR[nodeNum] = Math.random();
+    colorG[nodeNum] = Math.random();
+    colorB[nodeNum] = Math.random();
+
+    nodeNum++;
 }
 
 function generateTexCube() {
@@ -538,8 +760,8 @@ function texQuad(a, b, c, d) {
 function generateTexGround() {
     vertGroundStart = points.length;
     numVertGroundTri = 0;
-    for(var x=-4.5; x<4.5; x++) {
-        for(var z=-100; z<100; z++) {
+    for(var x=-1; x<=1; x++) {
+        for(var z=-3; z<3; z++) {
             // two triangles
             points.push(vec4(x, -1.0, z, 1.0));
             normals.push(vec4(0.0, 1.0, 0.0, 0.0));

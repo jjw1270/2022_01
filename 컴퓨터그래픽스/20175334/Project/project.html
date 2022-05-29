@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>20175334 장윤제 - Scene with Texture Mapping</title>
+        <title>20175334 장윤제 - Project</title>
         
         <script id="colorVS" type="x-shader/x-vertex">
             attribute vec4 vPosition;
 
             uniform mat4 modelMatrix, viewMatrix, projectionMatrix;
+            
             
             void main() {
                 gl_Position = projectionMatrix * viewMatrix * modelMatrix * vPosition;
@@ -15,7 +16,7 @@
 
         <script id="colorFS" type="x-shader/x-fragment">
             precision mediump float;
-            
+
             uniform vec4 uColor;
             
             void main() {
@@ -60,24 +61,6 @@
 
             gl_FragColor = ambientProduct + diffuse + specular;
             gl_FragColor.a = 1.0;
-            
-            /*vec3 N = normalize(fNormal);
-            vec3 V = normalize(eyePos - fWorldPos);
-
-            vec3 lightVec = lightSrc.xyz - fWorldPos;
-            vec3 L = normalize(lightVec);
-            float kd = max(dot(L, N), 0.0);
-            vec4 diffuse = kd * diffuseProduct;
-
-            vec3 H = normalize(L + V);
-            float ks = pow(max(dot(N, H), 0.0), shininess);
-            vec4 specular = ks * specularProduct;
-
-            float d = length(lightVec);
-            float atten = 1.0 / (kAtten[0] + kAtten[1]*d + kAtten[2]*d*d);
-            gl_FragColor = ambientProduct + atten * (diffuse + specular);
-           
-            gl_FragColor.a = 1.0; */
         }
         </script>
 
@@ -134,17 +117,21 @@
         <script type="text/javascript" src="project.js"></script>
     </head>
     <body>
-        <canvas id="gl-canvas" width="1024" height="512">
-            Oops... your browser doesn't support the HTML5 canvas element!
-        </canvas>
-        <div style="width:1024px; text-align:center;">
-            <button id="start" style="width:150px; height:60px"> <h2>START</h2> </button>
+        <div style="width: 700px; text-align: center;">
+            <button id="start" style="width:150px; height:60px;"> <h2>START</h2> </button>
+        </div>
+        <div style="float:left;">
+            <canvas id="gl-canvas" width="700" height="800">
+                Oops... your browser doesn't support the HTML5 canvas element!
+            </canvas>
+        </div>
+        <div style="width:700px; text-align:center;">
+            <button id="left" style="width:150px; height:30px">←</button>
+            <button id="center" style="width:150px; height:30px">↓</button>
+            <button id="right" style="width:150px; height:30px">→</button>
         </div>
         <div>
-            <img src="../images/brick2.bmp" hidden>
-            <img src="../images/crate.bmp" hidden>
-            <img src="../images/pocket.bmp" hidden>
-            <img src="../images/logo.bmp" hidden>
+            <img src="../images/neon.bmp" hidden>
         </div>
     </body>
 </html>
