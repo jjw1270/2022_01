@@ -174,9 +174,10 @@ window.onload = function init()
     };
 
     music.addEventListener("ended", function(){
-        isStart = false;
-        backGroundColor = [0.0, 0.0, 0.0];
+        //isStart = false;
+        //backGroundColor = [0.0, 0.0, 0.0];
         alert("Your Score : " + score);
+        window.location.reload();
     })
 
     render();
