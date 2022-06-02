@@ -1,0 +1,37 @@
+15
+
+2.
+A. <vector>
+B. <argorithm>
+C. <map>
+
+3.
+B
+
+4.
+template <typename T>
+T max(T x, T y){
+    if(x>y) return x;
+    else return y;
+}
+
+5.
+template <typename T>
+T get(const T *a, int size, int index){   //const T a[] 도 된다
+    if(index >= 0 && index < size) return a[index];
+    else return 0;
+}
+
+8.
+A. v.emplace_back(3.1);    or     v.push_back(3.1);
+B. v.size();
+C.  
+vector<double>::iterator it;
+it = v.begin();
+it = v.erase(it);
+
+12.
+auto method = [](int size, int *arr){
+        sort(arr, arr + size);
+};
+
