@@ -1,0 +1,153 @@
+1.
+A. O
+B. X // 멤버함수가 아닌 외부함수로 상속이 불가능 하다.
+C. X
+D. X
+E. O
+F. O
+G. X  // 피연산자의 개수를 변경할 수 없다.
+H. O
+I. O
+
+2.
+friend bool isCheck(int i, Exam e);  //외부함수를 프렌드로 선언
+friend ExamMember::em_method(Exam e);  // 다른 클래스의 멤버함수를 프렌드로 선언
+friend ExamMember;  // 다른 클래스 전체를 프렌드로 선언
+
+3.
+A. c = a + b;  // (c = a. + (b)) 멤버함수로 연산자 함수 구현
+Power operator+(Power op2);  
+Power Power::operator+(Power op2){  // 멤버함수
+	Power tmp;
+	tmp.kick = this->kick + op2.kick;
+	tmp.punch = this->punch + op2.punch;
+	return tmp;
+}
+B. c = a + b;  // (c = +(a, b)) 프렌드를 이용하여 연산자 함수를 외부함수로 구현
+friend Power operator+(Power op1, Power op2);  
+Power operator+(Power op1, Power op2){  // 외부함수
+	Power tmp;
+	tmp.kick = op1.kick + op2.kick;
+	tmp.punch = op1.punch + op2.punch;
+	return tmp;
+}
+*C. b = a + 2;  // (b = a. + (2)) 멤버함수로 연산자 함수 구현
+Power operator+(int op2);  
+Power Power::operator+(int op2){  // 멤버함수
+	Power tmp;
+	tmp.kick = kick + op2;
+	tmp.punch = punch + op2;
+	return tmp;
+}
+*D. b = 2 + a;  // (b = +(2, a)) 프렌드를 이용하여 연산자 함수를 외부함수로 구현
+friend Power operator+(int op1, Power op2);  
+Power operator+(int op1, Power op2){  // 외부함수
+	Power tmp;
+	tmp.kick = op1 + op2.kick;
+	tmp.punch = op1 + op2.punch;
+	return tmp;
+}
+E. a == b;
+bool operator==(const Power& op2);
+bool Power::operator==(const Power& op2){  // 멤버함수
+	if(kick==op2.kick && punch==op2.punch)
+		return true;
+	else
+		return false;
+*F. a += b;  // a. += (b)
+Power& operator+=(const Power& op2);
+Power& Power::operator+=(const Power& op2){  // 멤버함수
+	this->kick = this->kick + op2.kick;
+	this->punch = this->punch + op2.punch;
+	return *this;
+}
+*G. a = b;
+Power& operator=(const Power& op);
+Power& Power::operator=(const Power& op){
+	if(this == &op)
+		return *this;
+	// 복사 
+	return *this;
+}
+*H.
+I.
+J.
+*K. a++;  // a.++(int x) 멤버함수
+Power operator++(int x);
+Power Power::operator++(int x){
+	Power tmp = *this;
+	this->kick++;
+	this->punch++;
+	return tmp;
+}
+L. a++;  // 프렌드 사용
+friend Power operator++(int x);  
+Power operator++(int x){  // 외부함수
+	Power tmp = *this;
+	this->kick++;  // a객체
+	this->punch++;  // a객체
+	return tmp;
+}
+M.
+
+4. c= a * b
+멤버함수  // c = a. * (b)
+Power operator*(const Power& op2);  
+Power Power::operator*(const Power& op2){  // 멤버함수
+	Power tmp;
+	tmp.kick = this->kick * op2.kick;
+	tmp.punch = this->punch * op2.punch;
+	return tmp;
+}
+외부함수  // c = *(a, b)
+friend Power operator*(const Power& op1, const Power& op2);  
+Power operator*(const Power& op1, const Power& op2){  // 외부함수
+	Power tmp;
+	tmp.kick = op1.kick * op2.kick;
+	tmp.punch = op1.punch * op2.punch;
+	return tmp;
+}
+
+5.
+
+6. 
+Book& operator+=(int p);  // a += 500;
+Book& Book::operator+=(int p){
+	this->price= this->price + p;
+	return *this;
+}
+Book& operator-=(int p);  // a -= 500;
+Book& Book::operator-=(int p){
+	this->price= this->price - p;
+	return *this;
+}
+bool operator==(int x);  // c == 30000
+bool Book::operator==(int x){
+	if(price==x)
+		return true;
+	else
+		return false;
+bool& operator==(string t);  // c == "명품 C++"
+
+bool& operator==(Book b);  // c == d
+
+7.
+Matrix operator+(Matrix op);  // 이미 c가 있으니까 참조받아서&써야한다.
+Matrix Matrix::operator+(Matrix op){
+	Matrix tmp;
+	for(int i=0; i<4; i++){
+		tmp[i] = this[i] + op2[i];
+	}
+
+Matrix& operator+=(Matrix op);
+Matrix& operator>>(int a[]);
+Matrix& operator<<(int a[]);
+8.
+
+9. 중요함
+
+10.
+
+11.
+
+12.

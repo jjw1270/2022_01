@@ -1,0 +1,36 @@
+1.
+A. O
+B. O
+C. O
+D. X
+E. X
+
+2.
+A. boolalpha
+B. getline()
+C. const
+D. 인라인 함수
+E. <memory>
+
+3.
+auto list_exam(initializer_list<char> value, char m){
+
+4.
+Book (string t, int p):title(t), price(p){};
+
+5.
+b[i].getTitle()
+total += (b+i) -> getPrice()
+return total;
+
+6. 
+mylist = new Book [count]
+
+7.
+mylist[i].setTitle(btitle[index])
+mylist[i].setPrice(bprice[index])
+
+8. BookManager 소멸자 구현
+Book::~Book(){
+	delete [] mylist;
+}

@@ -1,0 +1,51 @@
+1.
+A. X  // 기본클래스->파생클래스 접근 X  파생클래스->기본클래스 접근 O
+B. X  // protected로 선언된 멤버는 파생클래스에서만 접근허용, 다른클래스나 외부함수
+에서는 protected에 접근 불가.
+C. X  // 상속 시 접근 지정자가 생략되면 private 상속이 이루어진다.
+D. O
+E. O
+F. X  // class Student:public Person{}  // Student - 파생클래스, Person - 기본클래스
+G. X  // 기본클래스의 포인터가 파생클래스의 포인터에 치환되는 것을 다운캐스팅이라함
+H. X // 다운캐스팅 시 강제 타입변환이 필수
+I. O
+J. O
+
+2.
+public : 기본 클래스의 protected, public 멤버 속성을 그대로 계승
+protected : 기본 클래스의 protected, public 멤버를 protected로 계승
+private : 기본 클래스의 protected, public 멤버를 private으로 계승
+
+정답:
+다중상속 : 여러 개의 클래스를 동시에 상속받는 것
+class A : public B, public C{ }
+가상상속 : 다중상속으로 인한 기본 클래스 멤버의 중복 상속을 해결해줌
+class A : virtual public B{ }
+
+3.
+기본 클래스 멤버의 중복 상속이 문제점이다
+해결방법 : 가상 상속으로 파생 클래스의 선언문에서 
+기본 클래스 앞에 virtual로 선언한다.
+파샐클래스의 객체가 생성될 떄 기본 클래스의 멤버는 
+오직 한번만 생성되어 기본클래스의 멤버가 중복 생성되는 것을 방지한다.
+
+4.
+virtual
+
+5.
+class Statellite : public Rocket, public Computer{ }
+
+6.
+//컴파일러에 의해 묵시적으로 기본생성자를 선택
+A.  B b;           생성자 A 생성자 B
+//매개변수를 가진 파생클래스의 생성자는 묵시적으로 기본 클래스의 기본생성자 선택함
+B.  B b(10);      생성자 A10 생성자 B10
+C.  B b(10, 20); 생성자 A32 생성자 B32
+
+7.
+
+8.
+
+9.
+
+10.

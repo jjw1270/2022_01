@@ -1,0 +1,65 @@
+1.
+A. O
+B. X  // 임시 객체 생성 없이 문자열 사용, 읽기전용o
+string view 컴파일 시 : g++ test.cpp -std=c++17 을 입력해야한다.
+
+2.
+A. 문자열.clear();  // 문자열 전체 삭제
+B. 문자열.substr(2,4);  // 문자열 일부 추출, 인덱스 2부터 4개 문자 추출
+C. 문자열1.append(문자열2);  // 문자열1과 문자열2 연결
+D. 문자열.erase(0, 4);  // 문자열 일부분 0부터 4개문자 삭제
+E. to_string(130);  // 숫자130을 문자열로 변환
+문자열 -> 숫자 변환은 stoi(int), stol(long), stod(double), stof(float)
+
+3. string str("This is a string");
+cout << str.length() << endl;  // 보통 length를 씀, 문자열 길이
+cout << str.size() << endl;  // x
+
+4. string str1("The time has come.");
+string str2("Are your ready?");
+str1.append(str2);  // str1에 str2를 붙인다.
+cout << str1 << endl;
+
+5. string str("ABCDEFGH");
+str.erase(0, 1);
+cout << str << endl;
+
+6. const char str[]="This is a long string.";
+int p = str.find("is");  // 인덱스 반환 , char* p는 주소를 받는다는 뜻
+cout << str[p] << endl;  // 시작 위치주소의 값, 즉 문자 i
+cout << str.erase(0, p) << endl;  // 시작주소부터 끝까지 문자열 출력
+(0부터 p까지 문자 삭제 == p의 인덱스부터 끝까지 문자열 출력)
+cout << str.substr(p) << endl;  //  p의 인덱스부터 끝까지 출력
+
+7.string str("ABCDEFGH");
+str.erase(0,str.length()-1);
+str=str.back();  // x
+cout << str<< endl;
+
+8.
+string removeChar(string str, char c);
+int k=0;
+while(k==0){
+	if(str.find(c) != -1){ // find결과가 없으면 -1반환함
+		int n = str.find(c);
+		str.erase(n, 1);
+	}
+	else{  k = 1 };
+}
+return str;
+
+string findAndReplace(string str, string olds, string news);
+int n = str.find(olds);
+str.erase(n, olds.length());
+news.append(str)
+return news;
+
+9.
+void toUpper(string &upstr)  // &upstr 참조자
+
+
+
+
+
+
+

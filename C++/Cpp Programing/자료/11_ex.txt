@@ -1,0 +1,69 @@
+1.
+A. O
+B. X  // typename : 제네릭 타입을 선언하는 키워드
+template <typename T>  // 템플릿 선언
+
+C. X
+D. O
+E. O
+F. X  // 오버로딩을 할 수 있다.
+G. O  // 두 값을 그룹으로 묶는 클래스는 pair 이다.
+pair<string,int> mypair("hello", 5);
+H. X  // map 컨테이너 요소들은 키값을 기준으로 오름차순으로 정렬된다.
+I. X  // set이 아닌 map 컨테이너 요소들은 '키'로 '값'을 검색 한다.
+J. O
+K. X(?)
+L. O
+
+2.
+A. #include<vector>
+B. #include<algorithm>
+C. #include<map>
+
+3. 템플릿 선언 잘못한 것
+A. template <class T>
+B. template (class T)
+C. template <typename T>
+D. template <typename T1, typename T2>
+=> B
+
+4.
+int max(T x, T y){  // == delctype(auto)
+	if(x>y) return T;
+	else return T;
+}
+
+5.
+template <typename T>
+T get(const T a[], int size, int index){
+	if(index >= && index < size) return a[index];
+	else return 0;
+}
+
+6.
+
+7.
+
+8.
+A. v.push_back(3.1);  ,  v.emplace_back(3.1);
+B. v.size();
+C. vector<double>::iterator it;
+it = v.begin();
+it = v.erase(it);
+
+9.
+iterator it 에 포인터* 중요
+
+10.
+
+11.
+
+12.
+auto method = [](int size, int *arr){
+
+13.
+
+14.
+
+15.
+
