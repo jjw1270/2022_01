@@ -22,8 +22,6 @@ window.onload = function init()
 
     generateColorCube();
     generateHexaPyramid();
-    generateColorCube();
-    generateHexaPyramid();
 
     var trball = trackball(canvas.width, canvas.height);
     var bMouseDown = false;
@@ -110,30 +108,27 @@ function render() {
     disp1[0] = 0.5;
     disp1[1] = -0.5;
     gl.uniform3fv(disp1Loc, disp1);
-    theta[axis] = theta[axis];
     gl.uniform3fv(thetaLoc, theta);
     gl.drawArrays(gl.TRIANGLES, 0, 36);    //위에서 line6개 그렸음으로 6부터 시작
 
     disp1[0] = 0.5;
     disp1[1] = 0.5;
     gl.uniform3fv(disp1Loc, disp1);
-    theta[axis] = -theta[axis];
+    theta[0] = -theta[0]; theta[1] = -theta[1]; theta[2] = -theta[2];
     gl.uniform3fv(thetaLoc, theta);
     gl.drawArrays(gl.TRIANGLES, 36, 36);    //위에서 line6개 그렸음으로 6부터 시작
 
     disp1[0] = -0.5;
     disp1[1] = -0.5;
     gl.uniform3fv(disp1Loc, disp1);
-    theta[axis] = theta[axis];
-    gl.uniform3fv(thetaLoc, theta);
-    gl.drawArrays(gl.TRIANGLES, 72, 36);
+    gl.drawArrays(gl.TRIANGLES, 0, 36);
 
     disp1[0] = -0.5;
     disp1[1] = 0.5;
     gl.uniform3fv(disp1Loc, disp1);
-    theta[axis] = -theta[axis];
+    theta[0] = -theta[0]; theta[1] = -theta[1]; theta[2] = -theta[2];
     gl.uniform3fv(thetaLoc, theta);
-    gl.drawArrays(gl.TRIANGLES, 108, 36);
+    gl.drawArrays(gl.TRIANGLES, 36, 36);
 
     window.requestAnimationFrame(render);
 }
