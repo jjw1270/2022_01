@@ -33,7 +33,7 @@ MyQueue::MyQueue(int capacity) : BaseArray(capacity), head{0}, tail{-1}, size{0}
 
 void MyQueue::enqueue(int n){
     //put()호출, head, size 조절
-    if(capacity() > size){
+    if(getCapacity() > size){
         put(head, n);
         head++;
         size++;
