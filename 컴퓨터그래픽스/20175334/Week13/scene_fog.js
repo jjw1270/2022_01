@@ -25,7 +25,7 @@ const objectPos = [
 
 function detectCollision(newPosX, newPosZ){
     for(var index = 0; index < objectPos.length; index++){
-        if(Math.abs(newPosX-objectPos[index][0]) < 1.0 && Math.abs(newPosZ-objectPos[index][0]) < 1.0)
+        if(Math.abs(newPosX-objectPos[index][0]) < 1.0 && Math.abs(newPosZ-objectPos[index][2]) < 1.0)
         return true;
     }
     return false;
@@ -464,12 +464,12 @@ function texQuad(a, b, c, d) {
 
     points.push(vertexPos[c]);
     normals.push(vertexNormals[c]);
-    texCoords.push(texCoord[1]);
+    texCoords.push(texCoord[2]);
     numVertCubeTri++;
 
     points.push(vertexPos[d]);
     normals.push(vertexNormals[d]);
-    texCoords.push(texCoord[2]);
+    texCoords.push(texCoord[3]);
     numVertCubeTri++;
 }
 
